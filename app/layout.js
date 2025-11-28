@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "ANDREW 계시툰",
-  description: "소모임 전용 웹툰 뷰어",
+  description: "ANDREW 전용 계시툰 뷰어",
 };
 
 export default function RootLayout({ children }) {

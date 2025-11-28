@@ -38,13 +38,13 @@ export default function EpisodePage() {
         <header className="mb-4">
   <Link
     href="/"
-    className="text-base text-blue-500 underline hover:text-blue-600 block mb-2"
+    className="text-sm md:text-base lg:text-lg text-blue-500 underline hover:text-blue-600 block mb-2"
   >
     ← 목록
   </Link>
 
   <h1 className="text-lg font-semibold">{episode.title}</h1>
-  <p className="text-xs text-gray-500 mt-1">{episode.description}</p>
+  <p className="text-sm text-gray-500 mt-1">{episode.description}</p>
 </header>
 
 
@@ -56,7 +56,8 @@ export default function EpisodePage() {
                 alt={`${episode.title} 컷 ${idx + 1}`}
                 width={1080}
                 height={1350}
-                className="w-full h-auto rounded-lg"
+                className="w-full h-auto object-cover"
+                priority={idx === 0}
               />
             </div>
           ))}
