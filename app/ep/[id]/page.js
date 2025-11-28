@@ -38,7 +38,7 @@ export default function EpisodePage() {
         <header className="mb-4">
   <Link
     href="/"
-    className="text-xs text-blue-500 underline hover:text-blue-600 block mb-2"
+    className="text-base text-blue-500 underline hover:text-blue-600 block mb-2"
   >
     ← 목록
   </Link>
