@@ -1,10 +1,15 @@
-// app/ep/[id]/page.js
-import episodes from "../../../data/episodes.json";
+"use client";
+
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import episodes from "../../../data/episodes.json";
 
-export default function EpisodePage({ params }) {
-  const { id } = params || {};
+export default function EpisodePage() {
+  const pathname = usePathname(); // 예: "/ep/ep20"
+  const segments = pathname.split("/").filter(Boolean);
+  const id = segments[segments.length - 1]; // 맨 끝 값 → "ep20"
+
   const episode = episodes.find((ep) => ep.id === id);
 
   if (!episode) {
@@ -22,7 +27,6 @@ export default function EpisodePage({ params }) {
     );
   }
 
-  // imageCount만 보고 /webtoon/{id}/1.png ~ n.png 자동 생성
   const images = Array.from(
     { length: episode.imageCount },
     (_, i) => `/webtoon/${episode.id}/${i + 1}.png`
@@ -31,7 +35,6 @@ export default function EpisodePage({ params }) {
   return (
     <main className="min-h-screen bg-slate-50">
       <div className="max-w-2xl mx-auto p-4">
-        {/* 상단 헤더 */}
         <header className="mb-4 flex items-center justify-between">
           <Link
             href="/"
@@ -47,7 +50,6 @@ export default function EpisodePage({ params }) {
           </div>
         </header>
 
-        {/* 웹툰 이미지들 */}
         <section className="bg-white rounded-xl shadow-sm p-3 space-y-4">
           {images.map((src, idx) => (
             <div key={idx} className="w-full">
