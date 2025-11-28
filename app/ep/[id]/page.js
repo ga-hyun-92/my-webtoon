@@ -1,5 +1,5 @@
 "use client";
-
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,7 +9,7 @@ export default function EpisodePage() {
   const pathname = usePathname(); // 예: "/ep/ep20"
   const segments = pathname.split("/").filter(Boolean);
   const id = segments[segments.length - 1]; // 맨 끝 값 → "ep20"
-
+  const [viewImage, setViewImage] = useState(null);
   const episode = episodes.find((ep) => ep.id === id);
 
   if (!episode) {
@@ -49,20 +49,34 @@ export default function EpisodePage() {
 
 
         <section className="bg-white rounded-xl shadow-sm p-3 space-y-4">
-          {images.map((src, idx) => (
-            <div key={idx} className="w-full">
-              <Image
-                src={src}
-                alt={`${episode.title} 컷 ${idx + 1}`}
-                width={1080}
-                height={1350}
-                className="w-full h-auto object-cover"
-                priority={idx === 0}
-              />
-            </div>
-          ))}
+           {images.map((src, idx) => (
+          <div key={idx} className="w-full">
+          <Image
+          src={src}
+          alt={`${episode.title} 컷 ${idx + 1}`}
+          width={1080}
+          height={1350}
+          className="w-full h-auto rounded-lg cursor-pointer"
+          onClick={() => setViewImage(src)}
+      />
+    </div>
+  ))}
         </section>
       </div>
+      {viewImage && (
+  <div
+    className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50"
+    onClick={() => setViewImage(null)}
+  >
+    <img
+      src={viewImage}
+      className="max-w-full max-h-full object-contain"
+      alt="viewer"
+    />
+  </div>
+)}
+
     </main>
+    
   );
 }
