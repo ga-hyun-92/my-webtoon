@@ -1,3 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 아래부터는 기존 스타일 있으면 그대로 두면 됨 */
+
 @import "tailwindcss";
 
 :root {
@@ -23,4 +29,20 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* 전체 화면 뷰어 이미지 전환 애니메이션 */
+@keyframes viewerFadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.viewer-image {
+  animation: viewerFadeSlideIn 0.25s ease-out;
 }
