@@ -38,7 +38,7 @@ export default function Home() {
                     {ep.description}
                   </div>
                   <div className="text-[11px] text-gray-400 mt-1">
-                    컷 수: {ep.imageCount}장
+                    총 {ep.imageCount}절
                   </div>
                 </div>
               </Link>
