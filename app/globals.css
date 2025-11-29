@@ -272,7 +272,7 @@ p {
   }
 
   .episode-grid-thumb {
-    height: 200px !important;     /* PC 썸네일 더 작게 */
+    height: 280px !important;     /* PC 썸네일 더 작게 */
   }
 
   .episode-grid-text h2 {
