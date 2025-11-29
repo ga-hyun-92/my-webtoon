@@ -11,8 +11,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-100">
-      <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-6 md:pt-10 pb-10">
-        {/* 헤더 */}
+      {/* ✅ 헤더 위쪽/왼쪽 여백 넉넉하게 */}
+      <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-8 md:pt-12 pb-10">
         <header className="mb-4 md:mb-6">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
@@ -24,8 +24,8 @@ export default function Home() {
           </p>
         </header>
 
-        {/* 🔥 모바일 2열, md 이상 3열 */}
-        <ul className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 lg:gap-5">
+        {/* 🔥 Tailwind grid 대신 내가 만든 CSS grid 사용 */}
+        <ul className="episode-grid-layout">
           {sortedEpisodes.map((ep) => (
             <li key={ep.id}>
               <Link href={`/ep/${ep.id}`} className="block">
@@ -39,12 +39,12 @@ export default function Home() {
                   </div>
 
                   <div className="episode-grid-text mt-1.5">
-                    {/* 모바일 slightly bigger, PC 조금 작게 */}
-                    <h2 className="font-bold text-[0.95rem] md:text-[0.85rem] leading-snug text-slate-900">
+                    {/* ✅ 모바일/PC 분리된 폰트 클래스 사용 */}
+                    <h2 className="episode-grid-title text-slate-900">
                       {ep.title}
                     </h2>
 
-                    <p className="mt-0.5 text-[0.7rem] md:text-[0.65rem] leading-snug text-slate-600 line-clamp-2">
+                    <p className="episode-grid-desc text-slate-600 line-clamp-2 mt-0.5">
                       {ep.description}
                     </p>
 

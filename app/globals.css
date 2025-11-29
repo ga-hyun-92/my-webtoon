@@ -157,3 +157,46 @@ a:hover {
 h1, h2, h3, h4, h5, h6, p {
   margin: 0;
 }
+
+/* ------------------------------
+   목록 그리드 레이아웃: 모바일 2열 → PC 3열
+------------------------------ */
+
+.episode-grid-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 기본: 2열 */
+  gap: 0.75rem; /* 카드 사이 간격 */
+}
+
+/* PC(데스크탑)에서만 3열로 변경 */
+@media (min-width: 1024px) {
+  .episode-grid-layout {
+    grid-template-columns: repeat(3, minmax(0, 1fr)); /* 3열 */
+    gap: 1rem;
+  }
+}
+
+/* 제목 폰트: 모바일 / PC 따로 */
+.episode-grid-title {
+  font-weight: 700;
+  font-size: 0.95rem;   /* 기본: 모바일 */
+  line-height: 1.25;
+}
+
+@media (min-width: 1024px) {
+  .episode-grid-title {
+    font-size: 0.85rem; /* PC에서 더 작게 */
+  }
+}
+
+/* 설명 폰트도 분리하고 싶으면 */
+.episode-grid-desc {
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+@media (min-width: 1024px) {
+  .episode-grid-desc {
+    font-size: 0.65rem;
+  }
+}
