@@ -3,7 +3,6 @@ import Link from "next/link";
 import episodes from "../data/episodes.json";
 
 export default function Home() {
-  // ep 숫자로 정렬
   const sortedEpisodes = [...episodes].sort((a, b) => {
     const numA = parseInt(a.id.replace("ep", ""), 10);
     const numB = parseInt(b.id.replace("ep", ""), 10);
@@ -12,7 +11,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-100">
-      {/* 모바일/PC 공통 컨테이너 */}
       <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-6 md:pt-10 pb-10">
         {/* 헤더 */}
         <header className="mb-4 md:mb-6">
@@ -26,7 +24,7 @@ export default function Home() {
           </p>
         </header>
 
-        {/* 목록: 모바일 1열, PC(>=md) 3열 */}
+        {/* 🔥 모바일 2열, md 이상 3열 */}
         <ul className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 lg:gap-5">
           {sortedEpisodes.map((ep) => (
             <li key={ep.id}>
@@ -40,19 +38,16 @@ export default function Home() {
                     />
                   </div>
 
-                  {/* 텍스트 영역 */}
                   <div className="episode-grid-text mt-1.5">
-                    {/* ✅ 모바일에서 더 크고, PC에서 살짝 작아짐 */}
-                    <h2 className="font-bold text-[0.95rem] leading-snug md:text-[0.85rem] lg:text-[0.85rem] text-slate-900">
+                    {/* 모바일 slightly bigger, PC 조금 작게 */}
+                    <h2 className="font-bold text-[0.95rem] md:text-[0.85rem] leading-snug text-slate-900">
                       {ep.title}
                     </h2>
 
-                    {/* 설명: 모바일/PC 모두 짧은 줄 간격 */}
                     <p className="mt-0.5 text-[0.7rem] md:text-[0.65rem] leading-snug text-slate-600 line-clamp-2">
                       {ep.description}
                     </p>
 
-                    {/* 하단 정보줄 */}
                     <div className="mt-1 flex items-center justify-between text-[0.65rem] text-slate-500">
                       <span className="inline-flex items-center gap-1">
                         <span className="inline-block h-3 w-1 rounded-full bg-emerald-500" />
