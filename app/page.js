@@ -29,18 +29,10 @@ export default function Home() {
         <ul className="space-y-4 md:space-y-5">
           {sortedEpisodes.map((ep) => (
             <li key={ep.id}>
+              {/* a 태그 전체를 카드처럼 사용 */}
               <Link href={`/ep/${ep.id}`} className="block">
-                <article
-                  className="
-                    flex items-center gap-4 md:gap-5
-                    rounded-2xl bg-white border border-slate-200
-                    px-4 py-3 md:px-5 md:py-4
-                    shadow-sm
-                    hover:border-emerald-500 hover:bg-emerald-50/60 hover:shadow-md
-                    transition
-                  "
-                >
-                  {/* 왼쪽 썸네일 : 규격 고정 (list-thumb 클래스) */}
+                <article className="episode-card flex items-center gap-4 md:gap-5 px-4 py-3 md:px-5 md:py-4">
+                  {/* 왼쪽 썸네일: 크기 고정 */}
                   <div className="list-thumb">
                     <img
                       src={`/webtoon/${ep.id}/1.png`}
@@ -48,7 +40,7 @@ export default function Home() {
                     />
                   </div>
 
-                  {/* 오른쪽 텍스트 영역 */}
+                  {/* 오른쪽 텍스트 */}
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
                     {/* 제목 */}
                     <h2 className="text-base md:text-lg font-semibold text-slate-900 truncate">
@@ -60,7 +52,7 @@ export default function Home() {
                       {ep.description}
                     </p>
 
-                    {/* 하단 메타 정보 */}
+                    {/* 하단 메타 */}
                     <div className="mt-1 flex items-center justify-between text-[11px] md:text-xs text-slate-500">
                       <span className="inline-flex items-center gap-1">
                         <span className="inline-block h-4 w-1 rounded-full bg-emerald-500" />
@@ -68,7 +60,7 @@ export default function Home() {
                           {ep.id}
                         </span>
                       </span>
-                      <span>총 {ep.imageCount}절</span>
+                      <span>1~{ep.imageCount}절</span>
                     </div>
                   </div>
                 </article>
