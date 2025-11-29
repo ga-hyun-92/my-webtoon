@@ -166,8 +166,8 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
           >
             닫기
           </button>
-          <div className="text-xs opacity-80 text-right">
-            <div className="font-bold">{title}</div>
+          <div className="text-ms opacity-80 text-right">
+            <div className="text-base font-bold">{title}</div>
             <div>
               {index + 1} / {images.length}
             </div>
