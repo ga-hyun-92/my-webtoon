@@ -261,3 +261,29 @@ h6,
 p {
   margin: 0;
 }
+
+/* ------------------------------
+   PC(데스크탑)에서 카드 크기 줄이기
+------------------------------ */
+@media (min-width: 1024px) {
+  .episode-grid-card {
+    padding: 0.6rem !important;   /* PC에서 내부 여백 줄이기 */
+    border-radius: 0.9rem;
+  }
+
+  .episode-grid-thumb {
+    height: 130px !important;     /* PC 썸네일 더 작게 */
+  }
+
+  .episode-grid-text h2 {
+    font-size: 0.9rem !important; /* PC에서 제목 축소 */
+  }
+
+  .episode-grid-text p {
+    font-size: 0.75rem !important; /* PC 설명 글자 축소 */
+  }
+
+  .episode-grid-text div {
+    font-size: 0.7rem !important; /* EP 번호, 절 부분 크기 축소 */
+  }
+}
