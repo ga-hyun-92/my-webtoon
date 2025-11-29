@@ -48,7 +48,7 @@ export default function Home() {
                  <div className="flex-1 min-w-0 max-w-[65%] md:max-w-none flex flex-col justify-center">
 
   {/* 제목 — 줄 간격 촘촘 + margin 제거 */}
-  <h2 className="text-sm md:text-lg font-semibold text-slate-900 leading-tight m-0 line-clamp-2">
+  <h2 className="text-sm md:text-base font-semibold text-slate-900 leading-tight m-0 line-clamp-2">
     {ep.title}
   </h2>
 
