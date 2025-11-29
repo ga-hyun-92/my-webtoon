@@ -4,23 +4,96 @@
 @tailwind components;
 @tailwind utilities;
 
-/* -------- 기본 폰트 & 배경 (뉴모피즘용) -------- */
+/* ------------------------------
+   Global 기본 스타일
+------------------------------ */
 
 body {
-  background: #e0e5ec;
-  color: #222831;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f3f4f6;            /* slate-100 느낌 */
+  color: #111827;                 /* slate-900 */
+  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans KR", sans-serif;
 }
 
-/* tailwind 예제에서 쓰던 유틸, 있어도 무방해서 그대로 둠 */
+/* Tailwind 커스텀 유틸 예시 (필요시 사용) */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
 }
 
-/* -------- 웹툰 뷰어 애니메이션 -------- */
+/* 브랜드 컬러 (네이버웹툰 계열 그린) */
+:root {
+  --webtoon-green: #00d564;
+}
+
+/* ------------------------------
+   Episode 페이지 컨테이너/카드 (예전 neo-* 재활용)
+------------------------------ */
+
+/* 전체 배경 */
+.neo-page {
+  background: #f3f4f6;
+}
+
+/* 에피소드 내부 카드 (본문 감싸는 박스) */
+.neo-card {
+  background: #ffffff;
+  border-radius: 1.25rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 8px rgba(15, 23, 42, 0.04);
+}
+
+/* 상단 '← 목록' 버튼용 */
+.neo-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 1rem;
+  padding-block: 0.4rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--webtoon-green);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.35);
+  transition: background 0.15s ease, transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.neo-button:hover {
+  background: #00c451;
+  box-shadow: 0 3px 6px rgba(16, 185, 129, 0.45);
+}
+
+.neo-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(16, 185, 129, 0.35);
+}
+
+/* 전체 화면 뷰어 상단 닫기 버튼 */
+.neo-button-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(15, 23, 42, 0.35);
+  color: #f9fafb;
+  font-size: 0.8rem;
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+}
+
+/* ------------------------------
+   전체 화면 이미지 뷰어 애니메이션
+   (FullscreenViewer에서 .viewer-image에 사용)
+------------------------------ */
 
 @keyframes viewerFadeSlideIn {
   from {
@@ -37,73 +110,28 @@ body {
   animation: viewerFadeSlideIn 0.25s ease-out;
 }
 
-/* -------- Neumorphism 공통 스타일 -------- */
+/* ------------------------------
+   목차 페이지 썸네일 고정 규격
+------------------------------ */
 
-.neo-page {
-  background: #e0e5ec;
-}
-
-/* 말랑 카드 */
-.neo-card {
-  background: #e0e5ec;
-  border-radius: 1rem;
-  box-shadow: 8px 8px 16px #c1c8d0, -8px -8px 16px #ffffff;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.neo-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 4px 4px 10px #c1c8d0, -4px -4px 10px #ffffff;
-}
-
-/* 오목 썸네일 */
-.neo-thumb {
-  background: #e0e5ec;
-  border-radius: 0.9rem;
-  box-shadow: inset 3px 3px 6px #c1c8d0, inset -3px -3px 6px #ffffff;
-}
-
-/* 말랑 버튼 */
-.neo-button {
-  background: #e0e5ec;
-  border-radius: 999px;
-  box-shadow: 4px 4px 8px #c1c8d0, -4px -4px 8px #ffffff;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-  border: none;
-}
-
-.neo-button:active {
-  transform: translateY(1px);
-  box-shadow: inset 3px 3px 6px #c1c8d0, inset -3px -3px 6px #ffffff;
-}
-
-/* 풀스크린 상단용 라이트 버튼 */
-.neo-button-light {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  padding: 0.3rem 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-}
-/* 목차 페이지 썸네일 전용 (항상 같은 크기) */
 .list-thumb {
-  width: 80px;   /* 모바일/PC 공통 썸네일 가로 */
-  height: 80px;  /* 항상 정사각형 */
+  width: 72px;
+  height: 72px;
   border-radius: 0.75rem;
   overflow: hidden;
-  background: #e5e7eb; /* 살짝 회색 배경 */
+  background: #e5e7eb;   /* gray-200 */
   flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
   .list-thumb {
-    width: 96px;  /* md 이상에서 조금 더 크게 */
-    height: 96px;
+    width: 88px;
+    height: 88px;
   }
 }
 
 .list-thumb img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* 이미지 비율 상관없이 박스에 꽉 차게 */
+  object-fit: cover;      /* 비율 상관없이 꽉 채우되 잘라냄 */
 }

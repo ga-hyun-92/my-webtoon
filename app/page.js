@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-100">
       <div className="max-w-4xl mx-auto px-4 py-8 md:py-10">
-        {/* 상단 헤더: 네이버툰 느낌 심플 헤더 */}
+        {/* 상단 헤더 */}
         <header className="mb-6 md:mb-8">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
@@ -32,24 +32,23 @@ export default function Home() {
               <Link href={`/ep/${ep.id}`} className="block">
                 <article
                   className="
-                    flex items-center gap-4 md:gap-6
-                    rounded-xl bg-white border border-slate-200
+                    flex items-center gap-4 md:gap-5
+                    rounded-2xl bg-white border border-slate-200
                     px-4 py-3 md:px-5 md:py-4
                     shadow-sm
-                    hover:border-emerald-400 hover:shadow-md hover:bg-emerald-50/40
+                    hover:border-emerald-500 hover:bg-emerald-50/60 hover:shadow-md
                     transition
                   "
                 >
-                {/* 왼쪽 썸네일 : 크기 고정 (규격 통일) */}
-<div className="list-thumb">
-  <img
-    src={`/webtoon/${ep.id}/1.png`}
-    alt={`${ep.title} 첫 컷`}
-  />
-</div>
+                  {/* 왼쪽 썸네일 : 규격 고정 (list-thumb 클래스) */}
+                  <div className="list-thumb">
+                    <img
+                      src={`/webtoon/${ep.id}/1.png`}
+                      alt={`${ep.title} 첫 컷`}
+                    />
+                  </div>
 
-
-                  {/* 오른쪽 텍스트 박스 */}
+                  {/* 오른쪽 텍스트 영역 */}
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
                     {/* 제목 */}
                     <h2 className="text-base md:text-lg font-semibold text-slate-900 truncate">
@@ -61,7 +60,7 @@ export default function Home() {
                       {ep.description}
                     </p>
 
-                    {/* 하단 메타 정보 : ep번호 + 절수 */}
+                    {/* 하단 메타 정보 */}
                     <div className="mt-1 flex items-center justify-between text-[11px] md:text-xs text-slate-500">
                       <span className="inline-flex items-center gap-1">
                         <span className="inline-block h-4 w-1 rounded-full bg-emerald-500" />
@@ -69,7 +68,7 @@ export default function Home() {
                           {ep.id}
                         </span>
                       </span>
-                      <span className="text-slate-500">총 {ep.imageCount}절</span>
+                      <span>총 {ep.imageCount}절</span>
                     </div>
                   </div>
                 </article>
@@ -81,4 +80,3 @@ export default function Home() {
     </main>
   );
 }
-
