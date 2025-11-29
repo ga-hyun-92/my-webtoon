@@ -11,7 +11,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-100">
-     <div className="max-w-4xl mx-auto px-0 md:px-4 py-6 md:py-10">
+     <div className="max-w-4xl mx-auto px-0 md:px-3 py-6 md:py-10">
 
         <header className="mb-6 md:mb-8">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
@@ -25,7 +25,7 @@ export default function Home() {
         </header>
 
         {/* ✅ 카드 간격 한 칸 더 넓게 */}
-        <ul className="space-y-7 md:space-y-7">
+        <ul className="space-y-9 md:space-y-9">
           {sortedEpisodes.map((ep) => (
             <li key={ep.id}>
               <Link href={`/ep/${ep.id}`} className="block">
@@ -52,7 +52,7 @@ export default function Home() {
                   {/* ✅ 텍스트 폭을 모바일에서 더 줄이기 (줄 길이 짧게) */}
                  <div className="flex-1 min-w-0 max-w-[65%] md:max-w-none flex flex-col justify-center">
   {/* 제목 */}
-  <h2 className="text-sm md:text-lg font-semibold text-slate-900 leading-tight m-0 line-clamp-2">
+  <h2 className="text-sm md:text-lg font-semibold text-slate-800 leading-tight m-0 line-clamp-2">
     {ep.title}
   </h2>
 
