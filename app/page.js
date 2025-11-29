@@ -40,14 +40,14 @@ export default function Home() {
                     transition
                   "
                 >
-                  {/* 왼쪽 썸네일 : 크기 고정 (규격 통일) */}
-                  <div className="w-20 h-20 md:w-24 md:h-24 overflow-hidden rounded-md bg-slate-200 flex-shrink-0">
-                    <img
-                      src={`/webtoon/${ep.id}/1.png`}
-                      alt={`${ep.title} 첫 컷`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                {/* 왼쪽 썸네일 : 크기 고정 (규격 통일) */}
+<div className="list-thumb">
+  <img
+    src={`/webtoon/${ep.id}/1.png`}
+    alt={`${ep.title} 첫 컷`}
+  />
+</div>
+
 
                   {/* 오른쪽 텍스트 박스 */}
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
@@ -81,3 +81,4 @@ export default function Home() {
     </main>
   );
 }
+
