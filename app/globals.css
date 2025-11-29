@@ -209,3 +209,14 @@ h1, h2, h3, h4, h5, h6, p {
     font-size: 0.65rem;
   }
 }
+
+/* 각 그리드 아이템(li)을 행 높이에 맞게 늘리기 */
+.episode-grid-item {
+  height: 100%;
+  display: flex;       /* 안에 있는 card를 꽉 채우게 */
+}
+
+/* 카드가 li 안을 가득 채우도록 */
+.episode-grid-card {
+  flex: 1 1 auto;
+}
