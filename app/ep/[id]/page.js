@@ -162,12 +162,12 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
         <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/80 to-transparent">
           <button
             onClick={onClose}
-            className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 text-xs"
+            className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 text-base"
           >
             닫기
           </button>
           <div className="text-xs opacity-80 text-right">
-            <div className="font-semibold">{title}</div>
+            <div className="font-bold">{title}</div>
             <div>
               {index + 1} / {images.length}
             </div>
