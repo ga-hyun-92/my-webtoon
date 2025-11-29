@@ -28,7 +28,7 @@ export default function Home() {
         {/* 🔹 리스트 영역 */}
         <section className="mt-1">
           {/* 모바일 1열, 태블릿 2열, PC(넓은 화면)는 3열 */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
             {sortedEpisodes.map((ep) => (
               <Link key={ep.id} href={`/ep/${ep.id}`} className="block">
                 <article className="episode-grid-card">
@@ -43,7 +43,7 @@ export default function Home() {
                   {/* 텍스트 영역 */}
                   <div className="episode-grid-text">
                     {/* 🔸 여기가 “모바일만 더 작게” 포인트 */}
-                    <h2 className="text-[13px] sm:text-sm md:text-lg font-semibold text-slate-900 line-clamp-2">
+                    <h2 className="text-[16px] sm:text-base md:text-lg  lg:text-lg font-semibold text-slate-900 line-clamp-2">
                       {ep.title}
                     </h2>
                     <p className="text-[11px] sm:text-xs md:text-sm text-slate-600 line-clamp-2">
