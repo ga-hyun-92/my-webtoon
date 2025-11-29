@@ -30,14 +30,15 @@ export default function Home() {
               <Link href={`/ep/${ep.id}`} className="block">
                 {/* ▶ 뉴모피즘 카드 */}
                 <article className="neo-card flex items-center gap-4 md:gap-6 px-5 py-4 md:px-6 md:py-5">
-                  {/* 왼쪽 썸네일 (세로보다 가로가 살짝 긴 직사각형) */}
-                  <div className="w-28 md:w-32 h-20 md:h-24 overflow-hidden rounded-xl bg-slate-200/60 flex-shrink-0">
-                    <img
-                      src={`/webtoon/${ep.id}/1.png`}
-                      alt={`${ep.title} 첫 컷`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                 {/* 왼쪽 썸네일 (항상 동일한 규격) */}
+                 <div className="w-20 h-14 md:w-24 md:h-16 overflow-hidden rounded-lg bg-slate-200/60 flex-shrink-0">
+                 <img
+                   src={`/webtoon/${ep.id}/1.png`}
+                   alt={`${ep.title} 첫 컷`}
+                   className="w-full h-full object-cover"
+                   />
+                   </div>
+
 
                   {/* 오른쪽 텍스트 영역 */}
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
