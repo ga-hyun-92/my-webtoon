@@ -158,11 +158,18 @@ a:hover {
     6px 6px 14px rgba(15, 23, 42, 0.12),
     -4px -4px 10px rgba(255, 255, 255, 0.95);
   overflow: hidden; /* ✅ 카드 밖으로 글자/이미지 안 튀어나가게 */
+  padding: 0.75rem;          /* ✅ 내부 여백 추가: 모바일에서 적당히 */
   transition:
     transform 0.12s ease,
     box-shadow 0.12s ease,
     border-color 0.12s ease,
     background 0.12s ease;
+
+    @media (min-width: 768px) {
+  .episode-card {
+    padding: 1rem 1.25rem;   /* ✅ 데스크탑에서는 조금 더 넉넉하게 */
+  }
+}
 }
 
 

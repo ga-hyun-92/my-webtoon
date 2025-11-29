@@ -32,7 +32,7 @@ export default function Home() {
                 <article
   className="
     episode-card 
-    w-full md:max-w-[820px]   /* PC에서는 820px만 */
+    w-full md:max-w-[700px]   /* PC에서는 820px만 */
     mx-auto                   /* 가운데 정렬 */
     flex items-center gap-3 md:gap-4
     px-3 py-3 md:px-5 md:py-4
