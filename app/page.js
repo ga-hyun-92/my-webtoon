@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-100">
       {/* ✅ 모바일은 거의 꽉 차게, 데스크탑은 여유 있게 */}
-      <div className="max-w-4xl mx-auto px-1 md:px-4 py-8 md:py-10">
+      <div className="max-w-4xl mx-auto px-0.4 md:px-4 py-8 md:py-10">
         <header className="mb-6 md:mb-8">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
@@ -25,7 +25,7 @@ export default function Home() {
         </header>
 
         {/* ✅ 카드 간격 한 칸 더 넓게 */}
-        <ul className="space-y-6 md:space-y-7">
+        <ul className="space-y-7 md:space-y-7">
           {sortedEpisodes.map((ep) => (
             <li key={ep.id}>
               <Link href={`/ep/${ep.id}`} className="block">
@@ -46,7 +46,7 @@ export default function Home() {
 
                   {/* ✅ 텍스트 폭을 모바일에서 더 줄이기 (줄 길이 짧게) */}
                   <div className="flex-1 min-w-0 max-w-[65%] md:max-w-none flex flex-col justify-center gap-1">
-                    <h2 className="text-sm md:text-lg font-semibold text-slate-900 line-clamp-2">
+                    <h2 className="text-sm md:text-lg font-semibold text-slate-900 mb-0.5 line-clamp-2">
                       {ep.title}
                     </h2>
                     <p className="text-xs md:text-sm text-slate-600 line-clamp-2">

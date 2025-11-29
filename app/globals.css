@@ -124,7 +124,7 @@ a:hover {
 ------------------------------ */
 
 .list-thumb {
-  width: 96px;      /* ✅ 모바일에서 확실히 더 크게 */
+  width: 98px;      /* ✅ 모바일에서 확실히 더 크게 */
   height: 96px;
   border-radius: 1rem;
   overflow: hidden;
@@ -134,8 +134,8 @@ a:hover {
 
 @media (min-width: 768px) {
   .list-thumb {
-    width: 80px;   /* ✅ 데스크탑에선 더 크게 */
-    height: 80px;
+    width: 120px;   /* ✅ 데스크탑에선 더 크게 */
+    height: 100px;
   }
 }
 
