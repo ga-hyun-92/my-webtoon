@@ -100,92 +100,133 @@ export default function EpisodePage() {
  */
 function FullscreenViewer({ images, initialIndex, onClose, title }) {
   const [index, setIndex] = useState(initialIndex);
-  const [touchStartX, setTouchStartX] = useState(null);
-  const [touchEndX, setTouchEndX] = useState(null);
+  const [anim, setAnim] = useState(""); // fade / slide-left / slide-right
+  const [isZoomed, setIsZoomed] = useState(false);
+  const touchStart = useRef(null);
 
-  const currentSrc = images[index];
+  /* ----------------------------------------
+     🔒 body scroll lock
+  -----------------------------------------*/
+  useEffect(() => {
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => (document.body.style.overflow = original);
+  }, []);
 
+  /* ----------------------------------------
+     좌/우 이동 함수
+  -----------------------------------------*/
   const goPrev = () => {
-    setIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    if (index === 0) return;
+    setAnim("slide-right");
+    setIndex(index - 1);
   };
 
   const goNext = () => {
-    setIndex((prev) =>
-      prev < images.length - 1 ? prev + 1 : prev
-    );
+    if (index === images.length - 1) return;
+    setAnim("slide-left");
+    setIndex(index + 1);
   };
 
-  const handleTouchStart = (e) => {
-    if (e.touches && e.touches.length === 1) {
-      setTouchStartX(e.touches[0].clientX);
-      setTouchEndX(null);
-    }
+  /* ----------------------------------------
+     스와이프 이벤트
+  -----------------------------------------*/
+  const onTouchStart = (e) => {
+    const t = e.touches[0];
+    touchStart.current = { x: t.clientX, y: t.clientY };
   };
 
-  const handleTouchMove = (e) => {
-    if (e.touches && e.touches.length === 1) {
-      setTouchEndX(e.touches[0].clientX);
-    }
+  const onTouchEnd = (e) => {
+    if (!touchStart.current) return;
+    const t = e.changedTouches[0];
+
+    const dx = t.clientX - touchStart.current.x;
+    const dy = t.clientY - touchStart.current.y;
+
+    // 세로가 더 크면 스크롤로 간주 → 무시
+    if (Math.abs(dy) > Math.abs(dx)) return;
+
+    if (dx > 60) goPrev();
+    if (dx < -60) goNext();
+
+    touchStart.current = null;
   };
 
-  const handleTouchEnd = () => {
-    if (touchStartX === null || touchEndX === null) return;
-    const diff = touchStartX - touchEndX;
-
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        goNext();  // 왼쪽으로 스와이프 → 다음 컷
-      } else {
-        goPrev();  // 오른쪽으로 스와이프 → 이전 컷
-      }
-    }
-
-    setTouchStartX(null);
-    setTouchEndX(null);
+  /* ----------------------------------------
+     더블탭 줌인
+  -----------------------------------------*/
+  const onDoubleTap = () => {
+    setIsZoomed((prev) => !prev);
   };
 
+  /* ----------------------------------------
+     애니메이션 해제 타이머
+  -----------------------------------------*/
+  useEffect(() => {
+    if (!anim) return;
+    const timer = setTimeout(() => setAnim(""), 300);
+    return () => clearTimeout(timer);
+  }, [anim]);
+
+  /* ----------------------------------------
+     렌더링
+  -----------------------------------------*/
   return (
-    <div
-      className="fixed inset-0 bg-black/95 flex items-center justify-center z-50"
-      onClick={onClose}
-    >
-      {/* 안쪽 컨텐츠 클릭이 밖으로 전파되지 않도록 */}
-      <div
-        className="relative w-full h-full flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* 상단 바: 닫기 + 인덱스 표시 (뉴모피즘 느낌 버튼) */}
-        <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
-          <button
-            onClick={onClose}
-            className="neo-button-light text-xs font-semibold"
-          >
-            닫기 ✕
-          </button>
+    <div className="fixed inset-0 bg-black/95 z-[9999] flex flex-col select-none touch-pan-y">
+      {/* 헤더 영역 */}
+      <div className="pt-safe flex justify-between items-center px-4 py-3 text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
+        <button onClick={onClose} className="neo-button-light px-3 py-1">
+          닫기 ✕
+        </button>
 
-          <div className="text-right leading-tight">
-            <div className="font-semibold text-base">{title}</div>
-            <div className="text-xs opacity-75">
-              {index + 1} / {images.length}
-            </div>
+        <div className="text-right leading-tight">
+          <div className="font-semibold text-base">{title}</div>
+          <div className="text-xs opacity-75">
+            {index + 1} / {images.length}
           </div>
         </div>
-
-        {/* 가운데 영역: 이미지 뷰 */}
-        <div
-          className="flex-1 flex items-center justify-center px-3 pb-6"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          <img
-            key={currentSrc}
-            src={currentSrc}
-            alt={`${title} 뷰어`}
-            className="viewer-image max-w-full max-h-full object-contain"
-          />
-        </div>
       </div>
+
+      {/* 본문 이미지 영역 */}
+      <div
+        className="flex-1 flex items-center justify-center relative overflow-hidden"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        onDoubleClick={onDoubleTap}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          key={index}
+          src={images[index]}
+          className={`
+            max-h-[90vh] w-auto object-contain 
+            transition-transform duration-200
+            ${isZoomed ? "scale-150" : "scale-100"}
+            ${
+              anim === "slide-left"
+                ? "animate-slideLeft"
+                : anim === "slide-right"
+                ? "animate-slideRight"
+                : "animate-fadeIn"
+            }
+          `}
+          draggable={false}
+        />
+      </div>
+
+      {/* PC 화살표 버튼 */}
+      <button
+        onClick={goPrev}
+        className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 text-white text-4xl opacity-60 hover:opacity-100"
+      >
+        ‹
+      </button>
+      <button
+        onClick={goNext}
+        className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 text-white text-4xl opacity-60 hover:opacity-100"
+      >
+        ›
+      </button>
     </div>
   );
 }
