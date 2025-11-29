@@ -124,18 +124,18 @@ a:hover {
 ------------------------------ */
 
 .list-thumb {
-  width: 72px;
-  height: 72px;
-  border-radius: 0.75rem;
+  width: 84px;    /* 모바일에서 살짝 키움 */
+  height: 84px;
+  border-radius: 0.9rem;
   overflow: hidden;
-  background: #e5e7eb;   /* gray-200 */
+  background: #e5e7eb;
   flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
   .list-thumb {
-    width: 88px;
-    height: 88px;
+    width: 104px; /* 데스크탑에선 더 큼 */
+    height: 104px;
   }
 }
 

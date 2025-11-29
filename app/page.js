@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-100">
       {/* ✅ 모바일에서 좌우 여백 조금 줄이기: px-3 / 데스크탑은 px-4 */}
-      <div className="max-w-4xl mx-auto px-3 md:px-4 py-8 md:py-10">
+      <div className="max-w-4xl mx-auto px-2 md:px-4 py-8 md:py-10">
         <header className="mb-6 md:mb-8">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
@@ -33,11 +33,10 @@ export default function Home() {
                     내부여백 ↑, 썸네일과 텍스트 간격 살짝 줄임 */}
                 <article
                   className="
-                    episode-card w-full
-                    flex items-center gap-3 md:gap-5
-                    px-4 py-4 md:px-6 md:py-4
-                  "
-                >
+                     episode-card w-full
+                     flex items-center gap-3 md:gap-5
+                     px-4 pt-4 pb-5 md:px-6 md:pt-4 md:pb-5"
+>
                   {/* 썸네일은 그대로 */}
                   <div className="list-thumb">
                     <img
