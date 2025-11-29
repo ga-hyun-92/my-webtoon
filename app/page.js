@@ -14,7 +14,7 @@ export default function Home() {
       {/* 전체 컨테이너 */}
       <div className="max-w-5xl mx-auto px-3 sm:px-4 pb-10">
         {/* 헤더 영역 – 위/왼쪽 여백 */}
-        <header className="mt-6 sm:mt-8 mb-4 sm:mb-6 pl-1 sm:pl-2">
+        <header className="mt-9 sm:mt-12 mb-4 sm:mb-6 pl-3 sm:pl-5">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
           </h1>
@@ -46,7 +46,7 @@ export default function Home() {
                   {/* 텍스트 영역 */}
                   <div className="episode-grid-text">
                     {/* 🔡 모바일 title 글자 크기 조절 포인트 */}
-                    <h2 className="text-[11px] sm:text-sm md:text-base font-semibold text-slate-900 line-clamp-2">
+                    <h2 className="text-[14px] sm:text-sm md:text-base font-semibold text-slate-900 line-clamp-2">
                       {ep.title}
                     </h2>
                     <p className="text-[11px] sm:text-xs md:text-sm text-slate-600 line-clamp-2">
