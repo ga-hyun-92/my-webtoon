@@ -45,20 +45,20 @@ export default function Home() {
                   </div>
 
                   {/* ✅ 텍스트 폭을 모바일에서 더 줄이기 (줄 길이 짧게) */}
-                  <div className="flex-1 min-w-0 max-w-[65%] md:max-w-none flex flex-col justify-center">
+                 <div className="flex-1 min-w-0 max-w-[65%] md:max-w-none flex flex-col justify-center">
 
-  {/* 제목 – 줄 간격 촘촘 (leading-tight), 아래 간격도 줄임 (mb-0.5) */}
-  <h2 className="text-sm md:text-lg font-semibold text-slate-900 leading-tight mb-0.3 line-clamp-2">
+  {/* 제목 — 줄 간격 촘촘 + margin 제거 */}
+  <h2 className="text-sm md:text-lg font-semibold text-slate-900 leading-tight m-0 line-clamp-2">
     {ep.title}
   </h2>
 
-  {/* 설명 – 줄 간격 더 촘촘 (leading-snug), 간격 줄여서 compact 효과 */}
-  <p className="text-xs md:text-sm text-slate-600 leading-snug line-clamp-2">
+  {/* 설명 — 줄 간격 촘촘 + margin 제거 */}
+  <p className="text-xs md:text-sm text-slate-600 leading-snug m-0 line-clamp-2">
     {ep.description}
   </p>
 
   {/* 하단 info */}
-  <div className="mt-1 flex items-center justify-between text-[11px] md:text-ms text-slate-500">
+  <div className="mt-1 flex items-center justify-between text-[11px] md:text-xs text-slate-500">
     <span className="inline-flex items-center gap-1">
       <span className="inline-block h-4 w-1 rounded-full bg-emerald-500" />
       <span className="uppercase tracking-wide">{ep.id}</span>
@@ -67,6 +67,7 @@ export default function Home() {
   </div>
 
 </div>
+
                 </article>
               </Link>
             </li>
