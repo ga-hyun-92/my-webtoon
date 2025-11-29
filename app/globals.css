@@ -150,18 +150,21 @@ a:hover {
 ------------------------------ */
 
 .episode-card {
+  position: relative;
   border-radius: 1.25rem;
   background: #f9fafb;
   border: 1px solid rgba(148, 163, 184, 0.5); /* slate-400 */
   box-shadow:
     6px 6px 14px rgba(15, 23, 42, 0.12),
     -4px -4px 10px rgba(255, 255, 255, 0.95);
+  overflow: hidden; /* ✅ 카드 밖으로 글자/이미지 안 튀어나가게 */
   transition:
     transform 0.12s ease,
     box-shadow 0.12s ease,
     border-color 0.12s ease,
     background 0.12s ease;
 }
+
 
 .episode-card:hover {
   transform: translateY(-1px);

@@ -43,9 +43,10 @@ export default function Home() {
                   {/* 오른쪽 텍스트 */}
                   <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
                     {/* 제목 */}
-                    <h2 className="text-base md:text-lg font-semibold text-slate-900 truncate">
-                      {ep.title}
-                    </h2>
+                    <h2 className="text-sm md:text-base font-semibold text-slate-900 line-clamp-2">
+  {ep.title}
+</h2>
+
 
                     {/* 설명 */}
                     <p className="text-xs md:text-sm text-slate-600 line-clamp-2">
