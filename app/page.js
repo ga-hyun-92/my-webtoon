@@ -11,8 +11,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-100">
-      {/* ✅ 모바일에서 좌우 여백 조금 줄이기: px-3 / 데스크탑은 px-4 */}
-      <div className="max-w-4xl mx-auto px-2 md:px-4 py-8 md:py-10">
+      {/* ✅ 모바일은 거의 꽉 차게, 데스크탑은 여유 있게 */}
+      <div className="max-w-4xl mx-auto px-1 md:px-4 py-8 md:py-10">
         <header className="mb-6 md:mb-8">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
@@ -24,20 +24,19 @@ export default function Home() {
           </p>
         </header>
 
-        {/* ✅ 카드 간격 조금 더 넓게: space-y-5 / md에서 6 */}
-        <ul className="space-y-5 md:space-y-6">
+        {/* ✅ 카드 간격 한 칸 더 넓게 */}
+        <ul className="space-y-6 md:space-y-7">
           {sortedEpisodes.map((ep) => (
             <li key={ep.id}>
               <Link href={`/ep/${ep.id}`} className="block">
-                {/* ✅ 카드가 컨테이너 폭 다 쓰도록 w-full, 
-                    내부여백 ↑, 썸네일과 텍스트 간격 살짝 줄임 */}
                 <article
                   className="
-                     episode-card w-full
-                     flex items-center gap-3 md:gap-5
-                     px-4 pt-4 pb-5 md:px-6 md:pt-4 md:pb-5"
->
-                  {/* 썸네일은 그대로 */}
+                    episode-card w-full
+                    flex items-center gap-3 md:gap-5
+                    px-3 pt-4 pb-6 md:px-6 md:pt-5 md:pb-6
+                  "
+                >
+                  {/* 썸네일 */}
                   <div className="list-thumb">
                     <img
                       src={`/webtoon/${ep.id}/1.png`}
@@ -45,9 +44,8 @@ export default function Home() {
                     />
                   </div>
 
-                  {/* ✅ 텍스트 영역 너비를 모바일에서 조금 줄이기:
-                      max-w-[70%] → 글줄 길이가 너무 길지 않게 */}
-                  <div className="flex-1 min-w-0 max-w-[70%] md:max-w-none flex flex-col justify-center gap-1">
+                  {/* ✅ 텍스트 폭을 모바일에서 더 줄이기 (줄 길이 짧게) */}
+                  <div className="flex-1 min-w-0 max-w-[65%] md:max-w-none flex flex-col justify-center gap-1">
                     <h2 className="text-sm md:text-lg font-semibold text-slate-900 line-clamp-2">
                       {ep.title}
                     </h2>
