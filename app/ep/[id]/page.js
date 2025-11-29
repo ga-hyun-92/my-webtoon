@@ -19,11 +19,9 @@ export default function EpisodePage() {
 
   if (!episode) {
     return (
-      <main className="min-h-screen bg-slate-50">
+      <main className="neo-page min-h-screen">
         <div className="max-w-2xl mx-auto p-6">
-          <p className="mb-3">
-            없는 회차입니다 🥲 (id: {String(id || "")})
-          </p>
+          <p className="mb-3">없는 회차입니다 🥲 (id: {String(id || "")})</p>
           <Link href="/" className="text-blue-500 underline">
             ← 목록으로 돌아가기
           </Link>
@@ -47,24 +45,23 @@ export default function EpisodePage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <div className="max-w-2xl mx-auto p-4">
+    <main className="neo-page min-h-screen py-6 px-4">
+      <div className="max-w-2xl mx-auto">
         {/* 상단 헤더 */}
         <header className="mb-4">
-  <Link
-    href="/"
-    className="text-base font-semibold text-[#00D564] hover:opacity-80 block mb-3"
-  >
-    ← 목록
-  </Link>
+          <Link href="/" className="inline-block mb-3">
+            <button className="neo-button px-4 py-1 text-sm text-slate-700">
+              ← 목록
+            </button>
+          </Link>
+          <h1 className="text-xl font-bold text-slate-900">
+            {episode.title}
+          </h1>
+          <p className="text-sm text-slate-600 mt-1">{episode.description}</p>
+        </header>
 
-  <h1 className="text-xl font-bold text-black">{episode.title}</h1>
-  <p className="text-sm text-gray-500 mt-1">{episode.description}</p>
-</header>
-
-
-        {/* 웹툰 이미지들 (모바일에서 가로 꽉 차도록) */}
-        <section className="bg-white rounded-xl shadow-sm p-3 space-y-4">
+        {/* 웹툰 이미지들 */}
+        <section className="neo-card p-3 space-y-4">
           {images.map((src, idx) => (
             <div key={idx} className="w-full">
               <Image
@@ -72,7 +69,7 @@ export default function EpisodePage() {
                 alt={`${episode.title} 컷 ${idx + 1}`}
                 width={1080}
                 height={1350}
-                className="w-full h-auto rounded-lg cursor-pointer"
+                className="w-full h-auto rounded-xl cursor-pointer"
                 onClick={() => openViewer(idx)}
                 // 브라우저 기본 핀치줌 그대로 동작하도록 touch 설정은 건드리지 않음
               />
@@ -135,14 +132,11 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     if (touchStartX === null || touchEndX === null) return;
     const diff = touchStartX - touchEndX;
 
-    // 스와이프 감지 threshold (px)
     if (Math.abs(diff) > 50) {
       if (diff > 0) {
-        // 왼쪽으로 밀었음 → 다음 컷
-        goNext();
+        goNext();  // 왼쪽으로 스와이프 → 다음 컷
       } else {
-        // 오른쪽으로 밀었음 → 이전 컷
-        goPrev();
+        goPrev();  // 오른쪽으로 스와이프 → 이전 컷
       }
     }
 
@@ -153,35 +147,29 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
   return (
     <div
       className="fixed inset-0 bg-black/95 flex items-center justify-center z-50"
-      onClick={onClose} // 빈 곳 클릭 시 닫힘
+      onClick={onClose}
     >
       {/* 안쪽 컨텐츠 클릭이 밖으로 전파되지 않도록 */}
       <div
         className="relative w-full h-full flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 상단 바: 닫기 + 인덱스 표시 */}
-        <div className="flex items-center justify-between px-4 py-3
-  text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
+        {/* 상단 바: 닫기 + 인덱스 표시 (뉴모피즘 느낌 버튼) */}
+        <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
+          <button
+            onClick={onClose}
+            className="neo-button-light text-xs font-semibold"
+          >
+            닫기 ✕
+          </button>
 
-  {/* 닫기 버튼 */}
-  <button
-    onClick={onClose}
-    className="px-3 py-1 rounded-md bg-white/20 hover:bg-white/30
-    text-white font-semibold text-sm"
-  >
-    닫기 ✕
-  </button>
-
-  {/* 제목 + 회차 번호 */}
-  <div className="text-right leading-tight">
-    <div className="font-semibold text-base">{title}</div>
-    <div className="text-xs opacity-75">
-      {index + 1} / {images.length}
-    </div>
-  </div>
-</div>
-
+          <div className="text-right leading-tight">
+            <div className="font-semibold text-base">{title}</div>
+            <div className="text-xs opacity-75">
+              {index + 1} / {images.length}
+            </div>
+          </div>
+        </div>
 
         {/* 가운데 영역: 이미지 뷰 */}
         <div
@@ -191,7 +179,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
           onTouchEnd={handleTouchEnd}
         >
           <img
-            key={currentSrc} // 인덱스 바뀔 때마다 애니메이션 다시 적용
+            key={currentSrc}
             src={currentSrc}
             alt={`${title} 뷰어`}
             className="viewer-image max-w-full max-h-full object-contain"
