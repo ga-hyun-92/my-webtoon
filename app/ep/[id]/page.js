@@ -100,22 +100,22 @@ export default function EpisodePage() {
  */
 function FullscreenViewer({ images, initialIndex, onClose, title }) {
   const [index, setIndex] = useState(initialIndex);
-  const [anim, setAnim] = useState(""); // fade / slide-left / slide-right
+  const [anim, setAnim] = useState("");
   const [isZoomed, setIsZoomed] = useState(false);
   const touchStart = useRef(null);
 
-  /* ----------------------------------------
-     🔒 body scroll lock
-  -----------------------------------------*/
+  // scroll lock (안전한 버전)
   useEffect(() => {
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => (document.body.style.overflow = original);
+    if (typeof document !== "undefined") {
+      const original = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      return () => {
+        document.body.style.overflow = original;
+      };
+    }
   }, []);
 
-  /* ----------------------------------------
-     좌/우 이동 함수
-  -----------------------------------------*/
   const goPrev = () => {
     if (index === 0) return;
     setAnim("slide-right");
@@ -128,9 +128,6 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     setIndex(index + 1);
   };
 
-  /* ----------------------------------------
-     스와이프 이벤트
-  -----------------------------------------*/
   const onTouchStart = (e) => {
     const t = e.touches[0];
     touchStart.current = { x: t.clientX, y: t.clientY };
@@ -143,7 +140,6 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     const dx = t.clientX - touchStart.current.x;
     const dy = t.clientY - touchStart.current.y;
 
-    // 세로가 더 크면 스크롤로 간주 → 무시
     if (Math.abs(dy) > Math.abs(dx)) return;
 
     if (dx > 60) goPrev();
@@ -152,28 +148,18 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     touchStart.current = null;
   };
 
-  /* ----------------------------------------
-     더블탭 줌인
-  -----------------------------------------*/
   const onDoubleTap = () => {
     setIsZoomed((prev) => !prev);
   };
 
-  /* ----------------------------------------
-     애니메이션 해제 타이머
-  -----------------------------------------*/
   useEffect(() => {
     if (!anim) return;
     const timer = setTimeout(() => setAnim(""), 300);
     return () => clearTimeout(timer);
   }, [anim]);
 
-  /* ----------------------------------------
-     렌더링
-  -----------------------------------------*/
   return (
     <div className="fixed inset-0 bg-black/95 z-[9999] flex flex-col select-none touch-pan-y">
-      {/* 헤더 영역 */}
       <div className="pt-safe flex justify-between items-center px-4 py-3 text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
         <button onClick={onClose} className="neo-button-light px-3 py-1">
           닫기 ✕
@@ -187,16 +173,14 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
         </div>
       </div>
 
-      {/* 본문 이미지 영역 */}
       <div
         className="flex-1 flex items-center justify-center relative overflow-hidden"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         onDoubleClick={onDoubleTap}
-        onClick={(e) => e.stopPropagation()}
       >
         <img
-          key={index}
+          key={images[index]}  // 중요
           src={images[index]}
           className={`
             max-h-[90vh] w-auto object-contain 
@@ -214,7 +198,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
         />
       </div>
 
-      {/* PC 화살표 버튼 */}
+      {/* PC 화살표 */}
       <button
         onClick={goPrev}
         className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 text-white text-4xl opacity-60 hover:opacity-100"
