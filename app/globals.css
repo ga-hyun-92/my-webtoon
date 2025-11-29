@@ -181,12 +181,12 @@ a:hover {
 
   /* PC 카드 크기 줄이기 */
   .episode-grid-card {
-    padding: 0.55rem !important;
+    padding: 1rem !important;
     border-radius: 0.85rem;
   }
 
   .episode-grid-thumb {
-    height: 150px !important;
+    height: 200px !important;
   }
 
   .episode-grid-text div {
@@ -205,5 +205,5 @@ h1, h2, h3, h4, h5, h6, p {
    헤더 위쪽 여백 강제 적용
 ------------------------------ */
 header {
-  padding-top: 1.2rem !important;
+  padding-top: 10rem !important;
 }
