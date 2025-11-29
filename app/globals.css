@@ -186,7 +186,7 @@ a:hover {
   }
 
   .episode-grid-thumb {
-    height: 130px !important;
+    height: 120px !important;
   }
 
   .episode-grid-text div {
@@ -205,5 +205,5 @@ h1, h2, h3, h4, h5, h6, p {
    헤더 위쪽 여백 강제 적용
 ------------------------------ */
 header {
-  padding-top: 3rem !important;
+  padding-top: 2rem !important;
 }
