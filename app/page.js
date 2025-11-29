@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <main className="neo-page min-h-screen py-8 px-4">
       <div className="max-w-3xl mx-auto">
-        {/* 헤더 */}
+        {/* 상단 헤더 */}
         <header className="mb-6">
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-800">
             ANDREW 계시툰
@@ -29,8 +29,8 @@ export default function Home() {
             <li key={ep.id}>
               <Link href={`/ep/${ep.id}`} className="block">
                 <article className="neo-card flex gap-4 md:gap-5 px-4 py-3 md:px-5 md:py-4 items-center">
-                  {/* 왼쪽: 썸네일(작게 고정) */}
-                  <div className="neo-thumb w-24 h-24 md:w-28 md:h-28 overflow-hidden flex-shrink-0">
+                  {/* 왼쪽: 가로로 긴 직사각형 썸네일 */}
+                  <div className="w-32 md:w-40 h-20 md:h-24 overflow-hidden rounded-xl bg-slate-200/60 flex-shrink-0">
                     <img
                       src={`/webtoon/${ep.id}/1.png`}
                       alt={`${ep.title} 첫 컷 썸네일`}
@@ -39,18 +39,24 @@ export default function Home() {
                   </div>
 
                   {/* 오른쪽: 텍스트 영역 */}
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+                    {/* 제목 */}
                     <h2 className="text-base md:text-lg font-semibold text-slate-900 truncate">
                       {ep.title}
                     </h2>
 
-                    <p className="mt-1 text-xs md:text-sm text-slate-600 line-clamp-2">
+                    {/* 설명 */}
+                    <p className="text-xs md:text-sm text-slate-600 line-clamp-2">
                       {ep.description}
                     </p>
 
-                    <p className="mt-2 text-[11px] md:text-xs text-slate-500">
-                      총 {ep.imageCount}컷
-                    </p>
+                    {/* 하단 메타 정보 */}
+                    <div className="mt-1 flex items-center justify-between text-[11px] md:text-xs text-slate-500">
+                      <span className="uppercase tracking-wide">
+                        {ep.id}
+                      </span>
+                      <span>총 {ep.imageCount}컷</span>
+                    </div>
                   </div>
                 </article>
               </Link>
