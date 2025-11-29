@@ -10,11 +10,11 @@ export default function Home() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-100">
-      {/* 전체 컨테이너 */}
+    // 🔹 페이지 맨 위 여백
+    <main className="min-h-screen bg-slate-100 pt-4 sm:pt-6">
       <div className="max-w-5xl mx-auto px-3 sm:px-4 pb-10">
-        {/* 헤더 영역 – 위/왼쪽 여백 */}
-        <header className="mt-9 sm:mt-12 mb-4 sm:mb-6 pl-3 sm:pl-5">
+        {/* 🔹 헤더 위/왼쪽 여백 */}
+        <header className="mt-4 sm:mt-6 mb-4 sm:mb-6 pl-1 sm:pl-2">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
           </h1>
@@ -25,17 +25,14 @@ export default function Home() {
           </p>
         </header>
 
-        {/* 그리드 목록: 모바일 2열, PC(중간 이상)는 3열 고정 */}
-        <section className="mt-2">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
+        {/* 🔹 리스트 영역 */}
+        <section className="mt-1">
+          {/* 모바일 1열, 태블릿 2열, PC(넓은 화면)는 3열 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
             {sortedEpisodes.map((ep) => (
-              <Link
-                key={ep.id}
-                href={`/ep/${ep.id}`}
-                className="block"
-              >
+              <Link key={ep.id} href={`/ep/${ep.id}`} className="block">
                 <article className="episode-grid-card">
-                  {/* 4:3 썸네일 */}
+                  {/* 썸네일 (4:3 비율) */}
                   <div className="episode-grid-thumb">
                     <img
                       src={`/webtoon/${ep.id}/1.png`}
@@ -45,17 +42,15 @@ export default function Home() {
 
                   {/* 텍스트 영역 */}
                   <div className="episode-grid-text">
-                    {/* 🔡 모바일 title 글자 크기 조절 포인트 */}
-                    <h2 className="text-[14px] sm:text-sm md:text-base font-semibold text-slate-900 line-clamp-2">
+                    {/* 🔸 여기가 “모바일만 더 작게” 포인트 */}
+                    <h2 className="text-[13px] sm:text-sm md:text-lg font-semibold text-slate-900 line-clamp-2">
                       {ep.title}
                     </h2>
                     <p className="text-[11px] sm:text-xs md:text-sm text-slate-600 line-clamp-2">
                       {ep.description}
                     </p>
                     <div className="mt-1 flex items-center justify-between text-[10px] sm:text-[11px] md:text-xs text-slate-500">
-                      <span className="uppercase tracking-wide">
-                        {ep.id}
-                      </span>
+                      <span className="uppercase tracking-wide">{ep.id}</span>
                       <span>1~{ep.imageCount}절</span>
                     </div>
                   </div>
