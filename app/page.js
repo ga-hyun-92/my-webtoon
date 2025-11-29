@@ -30,7 +30,7 @@ export default function Home() {
         {/* - 모바일: 1열
             - 태블릿(sm~): 2열
             - PC(lg 이상): 무조건 3열 */}
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+        <ul className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-5">
           {sortedEpisodes.map((ep) => (
             <li key={ep.id} className="flex">
               <Link href={`/ep/${ep.id}`} className="flex-1">
