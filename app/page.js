@@ -11,8 +11,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-100">
-      {/* ✅ 모바일은 거의 꽉 차게, 데스크탑은 여유 있게 */}
-      <div className="max-w-4xl mx-auto px-2 md:px-4 py-8 md:py-10">
+     <div className="max-w-4xl mx-auto px-0 md:px-4 py-6 md:py-10">
+
         <header className="mb-6 md:mb-8">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
@@ -36,6 +36,7 @@ export default function Home() {
     mx-auto                   /* 가운데 정렬 */
     flex items-center gap-3 md:gap-4
     px-3 py-3 md:px-5 md:py-4
+    
   "
 >
 
