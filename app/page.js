@@ -48,7 +48,7 @@ export default function Home() {
                   <div className="flex-1 min-w-0 max-w-[65%] md:max-w-none flex flex-col justify-center">
 
   {/* 제목 – 줄 간격 촘촘 (leading-tight), 아래 간격도 줄임 (mb-0.5) */}
-  <h2 className="text-sm md:text-lg font-semibold text-slate-900 leading-tight mb-0.5 line-clamp-2">
+  <h2 className="text-sm md:text-lg font-semibold text-slate-900 leading-tight mb-0.3 line-clamp-2">
     {ep.title}
   </h2>
 
@@ -58,7 +58,7 @@ export default function Home() {
   </p>
 
   {/* 하단 info */}
-  <div className="mt-1 flex items-center justify-between text-[11px] md:text-xs text-slate-500">
+  <div className="mt-1 flex items-center justify-between text-[11px] md:text-ms text-slate-500">
     <span className="inline-flex items-center gap-1">
       <span className="inline-block h-4 w-1 rounded-full bg-emerald-500" />
       <span className="uppercase tracking-wide">{ep.id}</span>
