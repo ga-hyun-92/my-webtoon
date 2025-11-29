@@ -11,9 +11,10 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-100">
-     <div className="max-w-4xl mx-auto px-0 md:px-3 py-6 md:py-10">
-
-        <header className="mb-6 md:mb-8">
+      {/* 모바일 / PC 모두에서 가운데 정렬, 폭 제한 */}
+      <div className="max-w-5xl mx-auto px-3 md:px-6 py-6 md:py-10">
+        {/* 헤더 */}
+        <header className="mb-5 md:mb-7">
           <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
           </h1>
@@ -24,57 +25,45 @@ export default function Home() {
           </p>
         </header>
 
-        {/* ✅ 카드 간격 한 칸 더 넓게 */}
-        <ul className="space-y-9 md:space-y-9">
-          {sortedEpisodes.map((ep) => (
-            <li key={ep.id}>
-              <Link href={`/ep/${ep.id}`} className="block">
-                <article
-  className="
-    episode-card 
-    w-full md:max-w-[700px]   /* PC에서는 820px만 */
-    mx-auto                   /* 가운데 정렬 */
-    flex items-center gap-3 md:gap-4
-    px-3 py-3 md:px-5 md:py-4
-    
-  "
->
+        {/* ✅ 에피소드 그리드 (모바일 2열, md 이상 3열, lg에서 4열) */}
+        <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 lg:gap-5">
+          {sortedEpisodes.map((ep) => {
+            const num = parseInt(ep.id.replace("ep", ""), 10);
 
+            return (
+              <li key={ep.id}>
+                <Link href={`/ep/${ep.id}`} className="block">
+                  <article className="episode-grid-card">
+                    {/* 4:3 썸네일 */}
+                    <div className="episode-grid-thumb">
+                      <img
+                        src={`/webtoon/${ep.id}/1.png`}
+                        alt={`${ep.title} 첫 컷`}
+                      />
+                    </div>
 
-                  {/* 썸네일 */}
-                  <div className="list-thumb">
-                    <img
-                      src={`/webtoon/${ep.id}/1.png`}
-                      alt={`${ep.title} 첫 컷`}
-                    />
-                  </div>
+                    {/* 텍스트 영역 */}
+                    <div className="episode-grid-text">
+                      {/* EP 라벨 */}
+                      <p className="text-[10px] md:text-xs text-emerald-600 font-semibold uppercase tracking-wide">
+                        EP{num}
+                      </p>
 
-                  {/* ✅ 텍스트 폭을 모바일에서 더 줄이기 (줄 길이 짧게) */}
-                 <div className="flex-1 min-w-0 max-w-[65%] md:max-w-none flex flex-col justify-center">
-  {/* 제목 */}
-  <h2 className="text-sm md:text-lg font-semibold text-slate-800 leading-tight m-0 line-clamp-2">
-    {ep.title}
-  </h2>
+                      {/* 제목 (두 줄까지만) */}
+                      <h2 className="text-xs md:text-sm font-semibold text-slate-900 leading-snug line-clamp-2">
+                        {ep.title}
+                      </h2>
 
-  {/* 설명 – 바로 아래 줄에 딱 붙게 */}
-  <p className="text-xs md:text-sm text-slate-600 leading-snug m-0 line-clamp-2">
-    {ep.description}
-  </p>
-
-  {/* 하단 EP / 절 정보 */}
-  <div className="mt-1 flex items-center justify-between text-[11px] md:text-sm text-slate-500">
-    <span className="inline-flex items-center gap-1">
-      <span className="inline-block h-4 w-1 rounded-full bg-emerald-500" />
-      <span className="uppercase tracking-wide">{ep.id}</span>
-    </span>
-    <span>1~{ep.imageCount}절</span>
-  </div>
-</div>
-
-                </article>
-              </Link>
-            </li>
-          ))}
+                      {/* 설명: 모바일에서는 숨기고, md 이상에서 1~2줄만 */}
+                      <p className="hidden md:block text-[11px] text-slate-600 leading-snug line-clamp-2">
+                        {ep.description}
+                      </p>
+                    </div>
+                  </article>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </main>

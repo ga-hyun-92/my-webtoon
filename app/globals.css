@@ -120,11 +120,12 @@ a:hover {
 }
 
 /* ------------------------------
-   목차 페이지 썸네일 규격 (항상 같은 크기)
+   (구) 목차 페이지 썸네일 규격
+   - 지금 써도 되고, 안 쓰면 그대로 놔둬도 됨
 ------------------------------ */
 
 .list-thumb {
-  width: 98px;      /* ✅ 모바일에서 확실히 더 크게 */
+  width: 98px;      /* 모바일에서 확실히 더 크게 */
   height: 96px;
   border-radius: 1rem;
   overflow: hidden;
@@ -134,7 +135,7 @@ a:hover {
 
 @media (min-width: 768px) {
   .list-thumb {
-    width: 120px;   /* ✅ 데스크탑에선 더 크게 */
+    width: 120px;   /* 데스크탑에선 더 크게 */
     height: 100px;
   }
 }
@@ -146,7 +147,8 @@ a:hover {
 }
 
 /* ------------------------------
-   목차 카드: 네이버웹툰 느낌 + 입체(뉴모피즘)
+   (구) 목차 카드: 뉴모피즘 버전
+   - 필요하면 계속 사용 가능
 ------------------------------ */
 
 .episode-card {
@@ -157,21 +159,20 @@ a:hover {
   box-shadow:
     6px 6px 14px rgba(15, 23, 42, 0.12),
     -4px -4px 10px rgba(255, 255, 255, 0.95);
-  overflow: hidden; /* ✅ 카드 밖으로 글자/이미지 안 튀어나가게 */
-  padding: 0.75rem;          /* ✅ 내부 여백 추가: 모바일에서 적당히 */
+  overflow: hidden;          /* 카드 밖으로 글자/이미지 안 튀어나가게 */
+  padding: 0.75rem;          /* 기본 내부 여백 */
   transition:
     transform 0.12s ease,
     box-shadow 0.12s ease,
     border-color 0.12s ease,
     background 0.12s ease;
+}
 
-    @media (min-width: 768px) {
+@media (min-width: 768px) {
   .episode-card {
-    padding: 1rem 1.25rem;   /* ✅ 데스크탑에서는 조금 더 넉넉하게 */
+    padding: 1rem 1.25rem;   /* 데스크탑에서는 조금 더 넉넉하게 */
   }
 }
-}
-
 
 .episode-card:hover {
   transform: translateY(-1px);
@@ -183,8 +184,74 @@ a:hover {
 }
 
 /* ------------------------------
+   그리드 카드용 스타일 (4:3 썸네일)
+   → 모바일/PC 둘 다 네이버웹툰 카드 느낌
+------------------------------ */
+
+/* 카드 전체 박스 */
+.episode-grid-card {
+  border-radius: 1rem;
+  background: #f9fafb;
+  border: 1px solid rgba(148, 163, 184, 0.5); /* slate-400 */
+  box-shadow:
+    4px 4px 10px rgba(15, 23, 42, 0.12),
+    -3px -3px 8px rgba(255, 255, 255, 0.95);  /* 가벼운 뉴모피즘 */
+  padding: 0.5rem 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    border-color 0.12s ease,
+    background 0.12s ease;
+}
+
+.episode-grid-card:hover {
+  transform: translateY(-1px);
+  border-color: #22c55e;         /* emerald-500 */
+  background: #f0fdf4;           /* emerald-50 */
+  box-shadow:
+    6px 6px 14px rgba(15, 23, 42, 0.16),
+    -4px -4px 10px rgba(255, 255, 255, 0.98);
+}
+
+/* 4:3 비율 썸네일 (가로가 더 긴 카드) */
+.episode-grid-thumb {
+  position: relative;
+  width: 100%;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+/* padding-top 75% → 가로:세로 = 4:3 유지 */
+.episode-grid-thumb::before {
+  content: "";
+  display: block;
+  padding-top: 75%;
+}
+
+/* 안의 이미지를 4:3 영역에 꽉 채우기 */
+.episode-grid-thumb img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 카드 안 텍스트 영역 간격 조금만 */
+.episode-grid-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+/* ------------------------------
    기본 태그 margin 리셋 (제목/본문)
 ------------------------------ */
+
 h1,
 h2,
 h3,
