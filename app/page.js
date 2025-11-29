@@ -14,7 +14,7 @@ export default function Home() {
     <main className="min-h-screen bg-slate-100 pt-4 sm:pt-6">
       <div className="max-w-5xl mx-auto px-3 sm:px-4 pb-10">
         {/* 🔹 헤더 위/왼쪽 여백 */}
-        <header className="mt-4 sm:mt-6 mb-4 sm:mb-6 pl-1 sm:pl-2">
+        <header className="mt-6 sm:mt-8 mb-4 sm:mb-6 pl-4 sm:pl-6">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
           </h1>
