@@ -54,7 +54,7 @@ export default function EpisodePage() {
               ← 목록
             </button>
           </Link>
-          <h1 className="text-xl font-bold text-slate-900">
+          <h1 className="text-l font-bold text-slate-900">
             {episode.title}
           </h1>
           <p className="text-sm text-slate-600 mt-1">{episode.description}</p>
