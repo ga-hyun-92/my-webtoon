@@ -122,10 +122,11 @@ a:hover {
 /* ------------------------------
    GRID 카드 (네이버웹툰 스타일)
 ------------------------------ */
+/* 카드 전체 박스 */
 .episode-grid-card {
   border-radius: 1rem;
   background: #f9fafb;
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.5);
   box-shadow:
     4px 4px 10px rgba(15, 23, 42, 0.12),
     -3px -3px 8px rgba(255, 255, 255, 0.95);
