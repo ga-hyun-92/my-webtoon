@@ -51,15 +51,17 @@ export default function EpisodePage() {
       <div className="max-w-2xl mx-auto p-4">
         {/* 상단 헤더 */}
         <header className="mb-4">
-          <Link
-            href="/"
-            className="text-base text-blue-500 underline hover:text-blue-600 block mb-2"
-          >
-            ← 목록
-          </Link>
-          <h1 className="text-lg font-semibold">{episode.title}</h1>
-          <p className="text-xs text-gray-500 mt-1">{episode.description}</p>
-        </header>
+  <Link
+    href="/"
+    className="text-base font-semibold text-[#00D564] hover:opacity-80 block mb-3"
+  >
+    ← 목록
+  </Link>
+
+  <h1 className="text-xl font-bold text-black">{episode.title}</h1>
+  <p className="text-sm text-gray-500 mt-1">{episode.description}</p>
+</header>
+
 
         {/* 웹툰 이미지들 (모바일에서 가로 꽉 차도록) */}
         <section className="bg-white rounded-xl shadow-sm p-3 space-y-4">
@@ -159,20 +161,27 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* 상단 바: 닫기 + 인덱스 표시 */}
-        <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/80 to-transparent">
-          <button
-            onClick={onClose}
-            className="px-2 py-1 rounded-md bg-white/10 hover:bg-white/20 text-base"
-          >
-            닫기
-          </button>
-          <div className="text-ms opacity-80 text-right">
-            <div className="text-base font-bold">{title}</div>
-            <div>
-              {index + 1} / {images.length}
-            </div>
-          </div>
-        </div>
+        <div className="flex items-center justify-between px-4 py-3
+  text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
+
+  {/* 닫기 버튼 */}
+  <button
+    onClick={onClose}
+    className="px-3 py-1 rounded-md bg-white/20 hover:bg-white/30
+    text-white font-semibold text-sm"
+  >
+    닫기 ✕
+  </button>
+
+  {/* 제목 + 회차 번호 */}
+  <div className="text-right leading-tight">
+    <div className="font-semibold text-base">{title}</div>
+    <div className="text-xs opacity-75">
+      {index + 1} / {images.length}
+    </div>
+  </div>
+</div>
+
 
         {/* 가운데 영역: 이미지 뷰 */}
         <div

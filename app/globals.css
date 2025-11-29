@@ -46,3 +46,9 @@ body {
 .viewer-image {
   animation: viewerFadeSlideIn 0.25s ease-out;
 }
+
+body {
+  background-color: #F5F5F7;
+  color: #111;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
