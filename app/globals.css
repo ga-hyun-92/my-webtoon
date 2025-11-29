@@ -10,7 +10,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: #f3f4f6;
+  background: #fafafa;
   color: #111827;
   font-family: system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Noto Sans KR", sans-serif;
@@ -41,11 +41,11 @@ a:hover {
    에피소드 페이지(상세보기)
 ------------------------------ */
 .neo-page {
-  background: #f3f4f6;
+  background: #fafafa;
 }
 
 .neo-card {
-  background: #ffffff;
+  background: #fafafa;
   border-radius: 1.25rem;
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 8px rgba(15, 23, 42, 0.05);
@@ -70,7 +70,7 @@ a:hover {
 }
 
 .neo-button:hover {
-  background: #00c451;
+  background: #176f79;
   box-shadow: 0 3px 6px rgba(16, 185, 129, 0.45);
 }
 .neo-button:active {
@@ -210,13 +210,3 @@ h1, h2, h3, h4, h5, h6, p {
   }
 }
 
-/* 각 그리드 아이템(li)을 행 높이에 맞게 늘리기 */
-.episode-grid-item {
-  height: 100%;
-  display: flex;       /* 안에 있는 card를 꽉 채우게 */
-}
-
-/* 카드가 li 안을 가득 채우도록 */
-.episode-grid-card {
-  flex: 1 1 auto;
-}
