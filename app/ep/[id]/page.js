@@ -70,7 +70,7 @@ export default function EpisodePage() {
         </header>
 
         {/* 에피소드 이미지 리스트 */}
-        <section className="neo-card p-3 space-y-4">
+        <section className="neo-card p-3 space-y-10">
           {images.map((src, idx) => (
             <div key={idx} className="w-full">
               <Image
@@ -184,7 +184,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
             padding: "12px 16px",
             background:
               "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)",
-            fontSize: 12,
+            fontSize: 13,
           }}
         >
           <button
@@ -195,7 +195,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
               border: "1px solid rgba(255,255,255,0.7)",
               background: "rgba(15,23,42,0.6)",
               color: "#f9fafb",
-              fontSize: 11,
+              fontSize: 12,
               cursor: "pointer",
             }}
           >
