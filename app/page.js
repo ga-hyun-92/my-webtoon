@@ -1,9 +1,8 @@
 // app/page.js
 import Link from "next/link";
-import episodes from "../data/episodes.json"; // ✅ 경로 딱 한 단계만 올라가기
+import episodes from "../data/episodes.json";
 
 export default function Home() {
-  // id 안의 숫자 기준으로 오름차순 정렬 (ep18, ep19, ep20…)
   const sortedEpisodes = [...episodes].sort((a, b) => {
     const numA = parseInt(a.id.replace("ep", ""), 10);
     const numB = parseInt(b.id.replace("ep", ""), 10);
@@ -12,7 +11,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-100">
-      {/* ✅ 헤더 위/좌측 여백 */}
+      {/* 상단 헤더 - 좌우/위 여백 넉넉하게 */}
       <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-8 md:pt-12 pb-10">
         <header className="mb-4 md:mb-6">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
@@ -25,12 +24,12 @@ export default function Home() {
           </p>
         </header>
 
-        {/* 🔥 CSS에서 만든 .episode-grid-layout 사용 (모바일 2열 → PC 3열) */}
+        {/* 👉 목록 그리드: 모바일 2열, PC 3열 */}
         <ul className="episode-grid-layout">
           {sortedEpisodes.map((ep) => (
             <li key={ep.id}>
               <Link href={`/ep/${ep.id}`} className="block">
-                <article className="episode-grid-card">
+                <article className="episode-grid-card h-full">
                   {/* 4:3 썸네일 */}
                   <div className="episode-grid-thumb">
                     <img
@@ -39,7 +38,6 @@ export default function Home() {
                     />
                   </div>
 
-                  {/* 텍스트 영역 */}
                   <div className="episode-grid-text mt-1.5">
                     <h2 className="episode-grid-title text-slate-900">
                       {ep.title}

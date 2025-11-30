@@ -1,20 +1,20 @@
 // app/ep/[id]/page.js
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import episodes from "../../../data/episodes.json";
 
 export default function EpisodePage() {
-  const pathname = usePathname(); // 예: "/ep/ep20"
+  const pathname = usePathname();        // 예: "/ep/ep18"
   const segments = pathname.split("/").filter(Boolean);
-  const id = segments[segments.length - 1]; // 맨 끝 값 = "ep20"
+  const id = segments[segments.length - 1]; // "ep18"
 
   const episode = episodes.find((ep) => ep.id === id);
 
-  // 전체 화면 뷰어용 현재 인덱스 (null = 닫힘)
+  // 전체 화면 뷰어용 인덱스 (null이면 닫힌 상태)
   const [viewerIndex, setViewerIndex] = useState(null);
 
   if (!episode) {
@@ -37,10 +37,12 @@ export default function EpisodePage() {
   );
 
   const openViewer = (index) => {
+    console.log("openViewer", index); // ▶ 디버깅용
     setViewerIndex(index);
   };
 
   const closeViewer = () => {
+    console.log("closeViewer"); // ▶ 디버깅용
     setViewerIndex(null);
   };
 
@@ -60,7 +62,7 @@ export default function EpisodePage() {
           <p className="text-sm text-slate-600 mt-1">{episode.description}</p>
         </header>
 
-        {/* 웹툰 이미지들 */}
+        {/* 에피소드 이미지 리스트 */}
         <section className="neo-card p-3 space-y-4">
           {images.map((src, idx) => (
             <div key={idx} className="w-full">
@@ -77,7 +79,7 @@ export default function EpisodePage() {
         </section>
       </div>
 
-      {/* 전체 화면 뷰어 */}
+      {/* 전체 화면 뷰어 오버레이 */}
       {viewerIndex !== null && (
         <FullscreenViewer
           images={images}
@@ -90,15 +92,12 @@ export default function EpisodePage() {
   );
 }
 
-/**
- * 전체 화면 이미지 뷰어
- * - 이미지 클릭 시 열림 / 닫기 버튼
- * - 좌/우 스와이프
- * - 키보드 좌/우 화살표 이동 (PC)
- * - 배경 스크롤 잠금
- * - 부드러운 fade+slide 애니메이션 (.viewer-image 는 globals.css 에 있음)
- * - 핀치줌 / 더블탭 줌은 브라우저 기본 기능 활용
- */
+/* -----------------------------
+   전체 화면 이미지 뷰어 (최소 버전)
+   - 배경 어둡게 + 큰 이미지 + 닫기
+   - 좌/우 버튼 + 터치 스와이프
+   - 일부 고급 기능(키보드/스크롤락)은 잠깐 빼둔 상태
+----------------------------- */
 function FullscreenViewer({ images, initialIndex, onClose, title }) {
   const [index, setIndex] = useState(initialIndex);
   const [touchStartX, setTouchStartX] = useState(null);
@@ -106,43 +105,17 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
 
   const currentSrc = images[index];
 
-  const goPrev = useCallback(() => {
+  const goPrev = () => {
     setIndex((prev) => (prev > 0 ? prev - 1 : prev));
-  }, []);
+  };
 
-  const goNext = useCallback(() => {
+  const goNext = () => {
     setIndex((prev) =>
       prev < images.length - 1 ? prev + 1 : prev
     );
-  }, [images.length]);
+  };
 
-  // ✅ 배경 스크롤 잠금 + 키보드 좌우 화살표
-  useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const handleKeyDown = (e) => {
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        goPrev();
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        goNext();
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        onClose();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [goPrev, goNext, onClose]);
-
-  // ✅ 터치 스와이프
+  // 터치 스와이프
   const handleTouchStart = (e) => {
     if (e.touches && e.touches.length === 1) {
       setTouchStartX(e.touches[0].clientX);
@@ -161,39 +134,28 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     const diff = touchStartX - touchEndX;
 
     if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        goNext(); // 왼쪽으로 스와이프 → 다음 컷
-      } else {
-        goPrev(); // 오른쪽으로 스와이프 → 이전 컷
-      }
+      if (diff > 0) goNext();  // 왼쪽으로 스와이프 → 다음 컷
+      else goPrev();           // 오른쪽으로 스와이프 → 이전 컷
     }
 
     setTouchStartX(null);
     setTouchEndX(null);
   };
 
-  // 혹시라도 인덱스가 잘못되면(이미지 없음) 안전하게 닫기
-  useEffect(() => {
-    if (!images || images.length === 0) return;
-    if (index < 0 || index > images.length - 1) {
-      onClose();
-    }
-  }, [index, images, onClose]);
-
   if (!images || images.length === 0) return null;
 
   return (
     <div
-      className="fixed inset-0 bg-black/95 flex items-center justify-center z-50"
-      onClick={onClose}  // 바깥 영역 클릭 → 닫기
+      className="fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]"
+      onClick={onClose}  // 바깥 영역 클릭 시 닫기
     >
-      {/* 안쪽 컨텐츠 클릭이 밖으로 전파되지 않도록 */}
+      {/* 안쪽 컨텐츠 클릭은 닫기 막기 */}
       <div
         className="relative w-full h-full flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 상단 바: 닫기 + 인덱스 표시 */}
-        <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
+        {/* 상단 바: 닫기 버튼 + 인덱스 */}
+        <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/80 to-transparent">
           <button
             onClick={onClose}
             className="neo-button-light text-xs font-semibold"
@@ -209,7 +171,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
           </div>
         </div>
 
-        {/* 가운데 영역: 이미지 뷰 + 터치 핸들러 */}
+        {/* 가운데 이미지 영역 + 터치 핸들러 */}
         <div
           className="flex-1 flex items-center justify-center px-3 pb-6"
           onTouchStart={handleTouchStart}
@@ -224,7 +186,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
           />
         </div>
 
-        {/* PC 화살표 네비게이션 (옵션) */}
+        {/* PC용 좌/우 버튼 */}
         <div className="hidden md:flex absolute inset-y-0 left-0 right-0 items-center justify-between px-4 pointer-events-none">
           <button
             type="button"
