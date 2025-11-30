@@ -8,13 +8,13 @@ import Link from "next/link";
 import episodes from "../../../data/episodes.json";
 
 export default function EpisodePage() {
-  const pathname = usePathname();          // 예: /ep/ep18
+  const pathname = usePathname();                // 예: /ep/ep18
   const segments = pathname.split("/").filter(Boolean);
-  const id = segments[segments.length - 1]; // "ep18"
+  const id = segments[segments.length - 1];      // "ep18"
 
   const episode = episodes.find((ep) => ep.id === id);
 
-  // 전체 화면 뷰어 인덱스 (null이면 닫힌 상태)
+  // 전체 화면 뷰어 인덱스 (null = 닫힘)
   const [viewerIndex, setViewerIndex] = useState(null);
 
   if (!episode) {
@@ -30,7 +30,7 @@ export default function EpisodePage() {
     );
   }
 
-  // /public/webtoon/{id}/1.png ~ n.png 자동 생성
+  // /public/webtoon/{id}/1.png ~ n.png
   const images = Array.from(
     { length: episode.imageCount },
     (_, i) => `/webtoon/${episode.id}/${i + 1}.png`
@@ -62,7 +62,7 @@ export default function EpisodePage() {
           </p>
         </header>
 
-        {/* 웹툰 컷 리스트 */}
+        {/* 컷 리스트 */}
         <section className="neo-card p-3 space-y-4">
           {images.map((src, idx) => (
             <div key={idx} className="w-full">
@@ -73,7 +73,6 @@ export default function EpisodePage() {
                 height={1350}
                 className="w-full h-auto rounded-xl cursor-pointer"
                 onClick={() => openViewer(idx)}
-                // 🔍 핀치줌/더블탭 줌은 브라우저 기본 동작 그대로 사용
               />
             </div>
           ))}
@@ -94,14 +93,13 @@ export default function EpisodePage() {
 }
 
 /**
- * 전체 화면 이미지 뷰어 컴포넌트
- * ✅ 이미지 클릭 → 전체 화면 뷰어
- * ✅ 상단 닫기 + 인덱스 표시
- * ✅ 좌/우 스와이프
- * ✅ PC 방향키 / 버튼으로 이동
- * ✅ 페이드 + 슬라이드 애니메이션 (globals.css 의 .viewer-image)
- * ✅ 핀치줌 / 더블탭 줌: 브라우저 기본
- * ✅ 배경 스크롤 락
+ * 전체 화면 이미지 뷰어
+ * - 브라우저 기본 핀치줌/더블탭 줌 유지
+ * - 좌/우 스와이프
+ * - PC 방향키 / 화살표 버튼
+ * - 상단 닫기 + 인덱스 표시
+ * - 배경 스크롤 잠금
+ * - .viewer-image 애니메이션 사용 (globals.css)
  */
 function FullscreenViewer({ images, initialIndex, onClose, title }) {
   const [index, setIndex] = useState(initialIndex);
@@ -120,8 +118,12 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     );
   };
 
-  // 🔒 배경 스크롤 락 + 키보드(← → Esc) 처리
+  // 🔒 스크롤 락 + 키보드 (← → Esc)
   useEffect(() => {
+    if (typeof document === "undefined" || typeof window === "undefined") {
+      return;
+    }
+
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -141,9 +143,11 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
       document.body.style.overflow = originalOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
+    // onClose만 dependency에 넣고, goNext/goPrev 는 내부에서 최신 state 기반으로 동작
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onClose]);
 
-  // 👆👈👉 터치 스와이프
+  // 터치 스와이프
   const handleTouchStart = (e) => {
     if (e.touches && e.touches.length === 1) {
       setTouchStartX(e.touches[0].clientX);
@@ -163,11 +167,9 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
 
     if (Math.abs(diff) > 50) {
       if (diff > 0) {
-        // 왼쪽으로 스와이프 → 다음 컷
-        goNext();
+        goNext(); // 왼쪽 스와이프 → 다음 컷
       } else {
-        // 오른쪽으로 스와이프 → 이전 컷
-        goPrev();
+        goPrev(); // 오른쪽 스와이프 → 이전 컷
       }
     }
 
@@ -180,14 +182,13 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
       className="fixed inset-0 bg-black/95 flex items-center justify-center z-50"
       onClick={onClose} // 배경 클릭 시 닫기
     >
-      {/* 안쪽 컨텐츠 클릭은 배경으로 전파 막기 */}
+      {/* 내부 클릭은 전파 막기 */}
       <div
         className="relative w-full h-full flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 상단 바: 닫기 버튼 + 제목/인덱스 */}
+        {/* 상단 바: 닫기 + 인덱스 */}
         <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
-          {/* 닫기 버튼 (뉴모피즘 느낌은 .neo-button-light) */}
           <button
             onClick={onClose}
             className="neo-button-light text-xs font-semibold"
@@ -203,14 +204,14 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
           </div>
         </div>
 
-        {/* 가운데 영역: 이미지 + 터치 스와이프 영역 */}
+        {/* 가운데 이미지 + 스와이프 영역 */}
         <div
           className="flex-1 flex items-center justify-center px-3 pb-6"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          {/* 방향 버튼 UI (PC, 태블릿에서도 사용 가능) */}
+          {/* PC 화살표 버튼 */}
           <button
             type="button"
             onClick={goPrev}
@@ -222,7 +223,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
           </button>
 
           <img
-            key={currentSrc} // 인덱스 바뀔 때마다 애니메이션 다시 적용
+            key={currentSrc}
             src={currentSrc}
             alt={`${title} 뷰어`}
             className="viewer-image max-w-full max-h-full object-contain"
