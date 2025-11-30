@@ -52,12 +52,16 @@ export default function EpisodePage() {
     <main className="neo-page min-h-screen py-6 px-4">
       <div className="max-w-2xl mx-auto">
         {/* 상단 헤더 */}
-        <header className="mb-8">
+        <header className="mb-4" style={{ marginBottom: "30px" }}   
+         // ← 여기!! 40px = 꽤 넉넉
+         >
           {/* 🔹 a 안에 button 넣지 말고 Link 자체를 버튼처럼 사용 */}
           <Link
             href="/"
             className="inline-flex mb-3 neo-button px-4 py-1 text-sm text-slate-700"
-          >
+            style={{  marginLeft: "10px", marginTop: "16px",  marginBottom: "20px"
+             }}
+           >
             ← 목록
           </Link>
 
@@ -70,7 +74,7 @@ export default function EpisodePage() {
         </header>
 
         {/* 에피소드 이미지 리스트 */}
-        <section className="neo-card p-3 pt-6">
+        <section className="neo-card p-3">
   {images.map((src, idx) => (
     <div
       key={idx}
