@@ -103,25 +103,28 @@ export default function EpisodePage() {
    전체 화면 이미지 뷰어 (최소 버전)
 ----------------------------- */
 function FullscreenViewer({ images, initialIndex, onClose, title }) {
-  const [index, setIndex] = useState(initialIndex);
-  const [touchStartX, setTouchStartX] = useState(null);
-  const [touchEndX, setTouchEndX] = useState(null);
+  const total = Array.isArray(images) ? images.length : 0;
+  const safeInitial = typeof initialIndex === "number" ? initialIndex : 0;
+  const [index, setIndex] = useState(
+    safeInitial >= 0 && safeInitial < total ? safeInitial : 0
+  );
 
-  if (!images || images.length === 0) return null;
-
-  const currentSrc = images[index];
+  if (!total) return null;
 
   const goPrev = () => {
     setIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
 
   const goNext = () => {
-    setIndex((prev) =>
-      prev < images.length - 1 ? prev + 1 : prev
-    );
+    setIndex((prev) => (prev < total - 1 ? prev + 1 : prev));
   };
 
-  // 터치 스와이프
+  const currentSrc = images[index];
+
+  // 터치 스와이프 상태
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
+
   const handleTouchStart = (e) => {
     if (e.touches && e.touches.length === 1) {
       setTouchStartX(e.touches[0].clientX);
@@ -140,69 +143,137 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     const diff = touchStartX - touchEndX;
 
     if (Math.abs(diff) > 50) {
-      if (diff > 0) goNext(); // 왼쪽으로 스와이프 → 다음 컷
-      else goPrev();          // 오른쪽으로 스와이프 → 이전 컷
+      if (diff > 0) goNext(); // 왼쪽 스와이프 → 다음
+      else goPrev();          // 오른쪽 스와이프 → 이전
     }
 
     setTouchStartX(null);
     setTouchEndX(null);
   };
 
+  // ✅ 여기서는 Tailwind 안 쓰고, 전부 인라인 스타일로 강제
   return (
     <div
-      className="fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]"
-      onClick={onClose} // 바깥 영역 클릭 시 닫기
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0, 0, 0, 0.9)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        zIndex: 999999,         // 진짜 맨 위로!
+        color: "#fff",
+      }}
     >
-      {/* 안쪽 컨텐츠 클릭은 닫기 막기 */}
+      {/* 안쪽 클릭은 닫기 막기 */}
       <div
-        className="relative w-full h-full flex flex-col"
         onClick={(e) => e.stopPropagation()}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}
       >
-        {/* 상단 바: 닫기 버튼 + 인덱스 */}
-        <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/80 to-transparent">
+        {/* 상단 바 */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "12px 16px",
+            background:
+              "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)",
+            fontSize: 12,
+          }}
+        >
           <button
             onClick={onClose}
-            className="neo-button-light text-xs font-semibold"
+            style={{
+              padding: "4px 10px",
+              borderRadius: 999,
+              border: "1px solid rgba(255,255,255,0.7)",
+              background: "rgba(15,23,42,0.6)",
+              color: "#f9fafb",
+              fontSize: 11,
+              cursor: "pointer",
+            }}
           >
             닫기 ✕
           </button>
-
-          <div className="text-right leading-tight">
-            <div className="font-semibold text-base">{title}</div>
-            <div className="text-xs opacity-75">
-              {index + 1} / {images.length}
+          <div style={{ textAlign: "right", lineHeight: 1.2 }}>
+            <div style={{ fontWeight: 600, fontSize: 14 }}>{title}</div>
+            <div style={{ fontSize: 11, opacity: 0.75 }}>
+              {index + 1} / {total}
             </div>
           </div>
         </div>
 
-        {/* 가운데 이미지 영역 + 터치 핸들러 */}
+        {/* 가운데 이미지 영역 */}
         <div
-          className="flex-1 flex items-center justify-center px-3 pb-6"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0 12px 20px",
+          }}
         >
           <img
-            key={currentSrc}
             src={currentSrc}
             alt={`${title} 뷰어`}
-            className="viewer-image max-w-full max-h-full object-contain"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "100%",
+              objectFit: "contain",
+            }}
           />
         </div>
 
-        {/* PC용 좌/우 버튼 */}
-        <div className="hidden md:flex absolute inset-y-0 left-0 right-0 items-center justify-between px-4 pointer-events-none">
+        {/* 좌/우 버튼 (PC에서 보기 편하게) */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            pointerEvents: "none",
+            padding: "0 8px",
+          }}
+        >
           <button
             type="button"
-            className="pointer-events-auto neo-button-light text-sm"
             onClick={goPrev}
+            style={{
+              pointerEvents: "auto",
+              padding: "8px 10px",
+              borderRadius: 999,
+              border: "1px solid rgba(255,255,255,0.7)",
+              background: "rgba(15,23,42,0.6)",
+              color: "#f9fafb",
+              fontSize: 12,
+              cursor: "pointer",
+            }}
           >
             ← 이전
           </button>
           <button
             type="button"
-            className="pointer-events-auto neo-button-light text-sm"
             onClick={goNext}
+            style={{
+              pointerEvents: "auto",
+              padding: "8px 10px",
+              borderRadius: 999,
+              border: "1px solid rgba(255,255,255,0.7)",
+              background: "rgba(15,23,42,0.6)",
+              color: "#f9fafb",
+              fontSize: 12,
+              cursor: "pointer",
+            }}
           >
             다음 →
           </button>
