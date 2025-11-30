@@ -2,15 +2,15 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import episodes from "../../../data/episodes.json";
 
 export default function EpisodePage() {
-  const pathname = usePathname();        // 예: "/ep/ep18"
-  const segments = pathname.split("/").filter(Boolean);
-  const id = segments[segments.length - 1]; // "ep18"
+  // ✅ URL에서 바로 id 가져오기: /ep/ep18 → { id: "ep18" }
+  const params = useParams();
+  const id = params?.id;
 
   const episode = episodes.find((ep) => ep.id === id);
 
@@ -21,7 +21,9 @@ export default function EpisodePage() {
     return (
       <main className="neo-page min-h-screen">
         <div className="max-w-2xl mx-auto p-6">
-          <p className="mb-3">없는 회차입니다 🥲 (id: {String(id || "")})</p>
+          <p className="mb-3">
+            없는 회차입니다 🥲 (id: {String(id || "")})
+          </p>
           <Link href="/" className="text-blue-500 underline">
             ← 목록으로 돌아가기
           </Link>
@@ -30,19 +32,19 @@ export default function EpisodePage() {
     );
   }
 
-  // /webtoon/{id}/1.png ~ n.png
+  // /public/webtoon/{id}/1.png ~ n.png
   const images = Array.from(
     { length: episode.imageCount },
     (_, i) => `/webtoon/${episode.id}/${i + 1}.png`
   );
 
   const openViewer = (index) => {
-    console.log("openViewer", index); // ▶ 디버깅용
+    console.log("openViewer", index);
     setViewerIndex(index);
   };
 
   const closeViewer = () => {
-    console.log("closeViewer"); // ▶ 디버깅용
+    console.log("closeViewer");
     setViewerIndex(null);
   };
 
@@ -51,15 +53,20 @@ export default function EpisodePage() {
       <div className="max-w-2xl mx-auto">
         {/* 상단 헤더 */}
         <header className="mb-4">
-          <Link href="/" className="inline-block mb-3">
-            <button className="neo-button px-4 py-1 text-sm text-slate-700">
-              ← 목록
-            </button>
+          {/* 🔹 a 안에 button 넣지 말고 Link 자체를 버튼처럼 사용 */}
+          <Link
+            href="/"
+            className="inline-flex mb-3 neo-button px-4 py-1 text-sm text-slate-700"
+          >
+            ← 목록
           </Link>
+
           <h1 className="text-base font-bold text-slate-900">
             {episode.title}
           </h1>
-          <p className="text-sm text-slate-600 mt-1">{episode.description}</p>
+          <p className="text-sm text-slate-600 mt-1">
+            {episode.description}
+          </p>
         </header>
 
         {/* 에피소드 이미지 리스트 */}
@@ -94,14 +101,13 @@ export default function EpisodePage() {
 
 /* -----------------------------
    전체 화면 이미지 뷰어 (최소 버전)
-   - 배경 어둡게 + 큰 이미지 + 닫기
-   - 좌/우 버튼 + 터치 스와이프
-   - 일부 고급 기능(키보드/스크롤락)은 잠깐 빼둔 상태
 ----------------------------- */
 function FullscreenViewer({ images, initialIndex, onClose, title }) {
   const [index, setIndex] = useState(initialIndex);
   const [touchStartX, setTouchStartX] = useState(null);
   const [touchEndX, setTouchEndX] = useState(null);
+
+  if (!images || images.length === 0) return null;
 
   const currentSrc = images[index];
 
@@ -134,20 +140,18 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     const diff = touchStartX - touchEndX;
 
     if (Math.abs(diff) > 50) {
-      if (diff > 0) goNext();  // 왼쪽으로 스와이프 → 다음 컷
-      else goPrev();           // 오른쪽으로 스와이프 → 이전 컷
+      if (diff > 0) goNext(); // 왼쪽으로 스와이프 → 다음 컷
+      else goPrev();          // 오른쪽으로 스와이프 → 이전 컷
     }
 
     setTouchStartX(null);
     setTouchEndX(null);
   };
 
-  if (!images || images.length === 0) return null;
-
   return (
     <div
       className="fixed inset-0 bg-black/90 flex items-center justify-center z-[9999]"
-      onClick={onClose}  // 바깥 영역 클릭 시 닫기
+      onClick={onClose} // 바깥 영역 클릭 시 닫기
     >
       {/* 안쪽 컨텐츠 클릭은 닫기 막기 */}
       <div
