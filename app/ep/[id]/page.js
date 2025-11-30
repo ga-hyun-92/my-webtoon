@@ -1,7 +1,7 @@
 // app/ep/[id]/page.js
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -71,7 +71,7 @@ export default function EpisodePage() {
                 height={1350}
                 className="w-full h-auto rounded-xl cursor-pointer"
                 onClick={() => openViewer(idx)}
-                // 핀치줌은 브라우저 기본 확대/축소를 그대로 사용
+                // 핀치줌/더블탭 줌은 브라우저 기본 확대/축소 기능 사용
               />
             </div>
           ))}
@@ -96,145 +96,116 @@ export default function EpisodePage() {
  * - 핀치줌: 모바일 브라우저 기본 확대/축소 사용 (우리가 막지 않음)
  * - 좌/우 스와이프: 터치 제스처로 컷 이동
  * - 상단 닫기/인덱스 표시
- * - 부드러운 전환 애니메이션 (fade + 살짝 슬라이드)
- * - 상하 스크롤 락 / 더블탭 줌 / PC 방향 버튼
+ * - 부드러운 전환 애니메이션 (globals.css의 viewerFadeSlideIn 사용)
+ * - PC 방향 버튼 UI
  */
 function FullscreenViewer({ images, initialIndex, onClose, title }) {
   const [index, setIndex] = useState(initialIndex);
-  const [anim, setAnim] = useState("");        // slide-left / slide-right / fadeIn
-  const [isZoomed, setIsZoomed] = useState(false);
-  const touchStart = useRef(null);
-
-  // 상하 스크롤 락 (document 안전하게 체크)
-  useEffect(() => {
-    if (typeof document !== "undefined") {
-      const original = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
-
-      return () => {
-        document.body.style.overflow = original;
-      };
-    }
-  }, []);
-
-  const goPrev = () => {
-    if (index === 0) return;
-    setAnim("slide-right");
-    setIndex((prev) => prev - 1);
-  };
-
-  const goNext = () => {
-    if (index === images.length - 1) return;
-    setAnim("slide-left");
-    setIndex((prev) => prev + 1);
-  };
-
-  // 터치 스와이프
-  const handleTouchStart = (e) => {
-    const t = e.touches[0];
-    touchStart.current = { x: t.clientX, y: t.clientY };
-  };
-
-  const handleTouchEnd = (e) => {
-    if (!touchStart.current) return;
-
-    const t = e.changedTouches[0];
-    const dx = t.clientX - touchStart.current.x;
-    const dy = t.clientY - touchStart.current.y;
-
-    // 좌우 스와이프만 인식 (상하 스크롤은 무시)
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-      if (dx < 0) goNext(); // 왼쪽으로 밀기 → 다음 컷
-      else goPrev();        // 오른쪽으로 밀기 → 이전 컷
-    }
-
-    touchStart.current = null;
-  };
-
-  // 더블탭 줌
-  const handleDoubleClick = () => {
-    setIsZoomed((prev) => !prev);
-  };
-
-  // 애니메이션 상태 reset
-  useEffect(() => {
-    if (!anim) return;
-    const timer = setTimeout(() => setAnim(""), 250);
-    return () => clearTimeout(timer);
-  }, [anim]);
+  const [touchStartX, setTouchStartX] = useState(null);
+  const [touchEndX, setTouchEndX] = useState(null);
 
   const currentSrc = images[index];
 
+  const goPrev = () => {
+    setIndex((prev) => (prev > 0 ? prev - 1 : prev));
+  };
+
+  const goNext = () => {
+    setIndex((prev) =>
+      prev < images.length - 1 ? prev + 1 : prev
+    );
+  };
+
+  const handleTouchStart = (e) => {
+    if (e.touches && e.touches.length === 1) {
+      setTouchStartX(e.touches[0].clientX);
+      setTouchEndX(null);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (e.touches && e.touches.length === 1) {
+      setTouchEndX(e.touches[0].clientX);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return;
+    const diff = touchStartX - touchEndX;
+
+    // 스와이프 감지 threshold (px)
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        // 왼쪽으로 밀었음 → 다음 컷
+        goNext();
+      } else {
+        // 오른쪽으로 밀었음 → 이전 컷
+        goPrev();
+      }
+    }
+
+    setTouchStartX(null);
+    setTouchEndX(null);
+  };
+
   return (
     <div
-      className="fixed inset-0 bg-black/95 z-[9999] flex flex-col select-none"
-      onClick={onClose} // 바깥 영역 클릭 시 닫기
+      className="fixed inset-0 bg-black/95 flex items-center justify-center z-50"
+      onClick={onClose} // 바깥 영역 클릭 시 닫힘
     >
-      {/* 상단 바: 닫기 + 인덱스 */}
+      {/* 안쪽 컨텐츠 클릭이 밖으로 전파되지 않도록 */}
       <div
-        className="pt-safe flex items-center justify-between px-4 py-3
-                   text-white text-sm bg-gradient-to-b from-black/70 to-transparent"
-        onClick={(e) => e.stopPropagation()} // 상단 바 클릭은 닫기 막기
+        className="relative w-full h-full flex flex-col"
+        onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          className="neo-button-light px-3 py-1 text-xs font-semibold"
-        >
-          닫기 ✕
-        </button>
+        {/* 상단 바: 닫기 + 인덱스 표시 */}
+        <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
+          <button
+            onClick={onClose}
+            className="neo-button-light text-xs font-semibold"
+          >
+            닫기 ✕
+          </button>
 
-        <div className="text-right leading-tight">
-          <div className="font-semibold text-base">{title}</div>
-          <div className="text-xs opacity-75">
-            {index + 1} / {images.length}
+          <div className="text-right leading-tight">
+            <div className="font-semibold text-base">{title}</div>
+            <div className="text-xs opacity-75">
+              {index + 1} / {images.length}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* 가운데 이미지 영역 */}
-      <div
-        className="flex-1 flex items-center justify-center relative overflow-hidden touch-pan-y"
-        onClick={(e) => e.stopPropagation()} // 이미지 영역 클릭은 닫기 막기
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onDoubleClick={handleDoubleClick}
-      >
-        <img
-          key={currentSrc}
-          src={currentSrc}
-          alt={`${title} 뷰어`}
-          draggable={false}
-          className={`
-            max-h-[90vh] w-auto object-contain 
-            transition-transform duration-200
-            ${isZoomed ? "scale-150" : "scale-100"}
-            ${
-              anim === "slide-left"
-                ? "animate-slideLeft"
-                : anim === "slide-right"
-                ? "animate-slideRight"
-                : "animate-fadeIn"
-            }
-          `}
-        />
+        {/* 가운데 영역: 이미지 뷰 */}
+        <div
+          className="flex-1 flex items-center justify-center px-3 pb-6 relative"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          <img
+            key={currentSrc} // 인덱스 바뀔 때마다 애니메이션 다시 적용
+            src={currentSrc}
+            alt={`${title} 뷰어`}
+            className="viewer-image max-w-full max-h-full object-contain"
+            draggable={false}
+          />
 
-        {/* PC 화살표 버튼 */}
-        <button
-          type="button"
-          onClick={goPrev}
-          className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 
-                     text-white text-4xl opacity-60 hover:opacity-100"
-        >
-          ‹
-        </button>
-        <button
-          type="button"
-          onClick={goNext}
-          className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 
-                     text-white text-4xl opacity-60 hover:opacity-100"
-        >
-          ›
-        </button>
+          {/* PC 방향 버튼 (중간 좌우) */}
+          <button
+            type="button"
+            onClick={goPrev}
+            className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 text-white text-3xl opacity-70 hover:opacity-100"
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            onClick={goNext}
+            className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 text-white text-3xl opacity-70 hover:opacity-100"
+          >
+            ›
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import Link from "next/link";
 import episodes from "../data/episodes.json";
 
 export default function Home() {
+  // ep 숫자 기준 오름차순 정렬 (ep18 → ep19 → ep20 ...)
   const sortedEpisodes = [...episodes].sort((a, b) => {
     const numA = parseInt(a.id.replace("ep", ""), 10);
     const numB = parseInt(b.id.replace("ep", ""), 10);
@@ -11,8 +12,9 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-100">
-      {/* ✅ 헤더 위쪽/왼쪽 여백 넉넉하게 */}
+      {/* 상단 여백 + 좌우 여백 + 전체 최대 폭 */}
       <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-8 md:pt-12 pb-10">
+        {/* 헤더 영역 */}
         <header className="mb-4 md:mb-6">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
             ANDREW 계시툰
@@ -24,13 +26,15 @@ export default function Home() {
           </p>
         </header>
 
-        {/* 🔥 Tailwind grid 대신 내가 만든 CSS grid 사용 */}
+        {/* 🔥 네이버웹툰 스타일 카드 그리드
+            - .episode-grid-layout: globals.css 에 정의 (모바일 2열, PC 3열) */}
         <ul className="episode-grid-layout">
           {sortedEpisodes.map((ep) => (
-            <li key={ep.id}>
-              <Link href={`/ep/${ep.id}`} className="block">
+            <li key={ep.id} className="h-full">
+              <Link href={`/ep/${ep.id}`} className="block h-full">
+                {/* .episode-grid-card: 뉴모피즘 카드 + 높이 맞추기 */}
                 <article className="episode-grid-card h-full">
-                  {/* 4:3 썸네일 */}
+                  {/* 4:3 썸네일 – .episode-grid-thumb 가 비율 유지 */}
                   <div className="episode-grid-thumb">
                     <img
                       src={`/webtoon/${ep.id}/1.png`}
@@ -38,9 +42,10 @@ export default function Home() {
                     />
                   </div>
 
+                  {/* 텍스트 영역 – 제목/설명/EP 정보 */}
                   <div className="episode-grid-text mt-1.5">
-                    {/* ✅ 모바일/PC 분리된 폰트 클래스 사용 */}
-                    <h2 className="episode-grid-title text-slate-900">
+                    {/* 모바일/PC 따로 크기 잡는 클래스 (.episode-grid-title) */}
+                    <h2 className="episode-grid-title text-slate-900 line-clamp-2">
                       {ep.title}
                     </h2>
 
