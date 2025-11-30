@@ -70,20 +70,24 @@ export default function EpisodePage() {
         </header>
 
         {/* 에피소드 이미지 리스트 */}
-        <section className="neo-card p-3 space-y-10">
-          {images.map((src, idx) => (
-            <div key={idx} className="w-full">
-              <Image
-                src={src}
-                alt={`${episode.title} 컷 ${idx + 1}`}
-                width={1080}
-                height={1350}
-                className="w-full h-auto rounded-xl cursor-pointer"
-                onClick={() => openViewer(idx)}
-              />
-            </div>
-          ))}
-        </section>
+        <section className="neo-card p-3">
+  {images.map((src, idx) => (
+    <div
+      key={idx}
+      className="w-full mb-16 last:mb-0"   // ⬅⬅ 여기!
+    >
+      <Image
+        src={src}
+        alt={`${episode.title} 컷 ${idx + 1}`}
+        width={1080}
+        height={1350}
+        className="w-full h-auto rounded-xl cursor-pointer"
+        onClick={() => openViewer(idx)}
+      />
+    </div>
+  ))}
+</section>
+
       </div>
 
       {/* 전체 화면 뷰어 오버레이 */}
