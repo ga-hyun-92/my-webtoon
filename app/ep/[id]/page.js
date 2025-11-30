@@ -1,20 +1,20 @@
 // app/ep/[id]/page.js
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import episodes from "../../../data/episodes.json";
 
 export default function EpisodePage() {
-  const pathname = usePathname(); // 예: "/ep/ep20"
+  const pathname = usePathname();          // 예: /ep/ep18
   const segments = pathname.split("/").filter(Boolean);
-  const id = segments[segments.length - 1]; // 맨 끝 값 = "ep20"
+  const id = segments[segments.length - 1]; // "ep18"
 
   const episode = episodes.find((ep) => ep.id === id);
 
-  // 전체 화면 뷰어용 현재 인덱스 (null = 닫힘)
+  // 전체 화면 뷰어 인덱스 (null이면 닫힌 상태)
   const [viewerIndex, setViewerIndex] = useState(null);
 
   if (!episode) {
@@ -30,7 +30,7 @@ export default function EpisodePage() {
     );
   }
 
-  // imageCount만 보고 /webtoon/{id}/1.png ~ n.png 자동 생성
+  // /public/webtoon/{id}/1.png ~ n.png 자동 생성
   const images = Array.from(
     { length: episode.imageCount },
     (_, i) => `/webtoon/${episode.id}/${i + 1}.png`
@@ -57,10 +57,12 @@ export default function EpisodePage() {
           <h1 className="text-base font-bold text-slate-900">
             {episode.title}
           </h1>
-          <p className="text-sm text-slate-600 mt-1">{episode.description}</p>
+          <p className="text-sm text-slate-600 mt-1">
+            {episode.description}
+          </p>
         </header>
 
-        {/* 웹툰 이미지들 */}
+        {/* 웹툰 컷 리스트 */}
         <section className="neo-card p-3 space-y-4">
           {images.map((src, idx) => (
             <div key={idx} className="w-full">
@@ -71,7 +73,7 @@ export default function EpisodePage() {
                 height={1350}
                 className="w-full h-auto rounded-xl cursor-pointer"
                 onClick={() => openViewer(idx)}
-                // 핀치줌/더블탭 줌은 브라우저 기본 확대/축소 기능 사용
+                // 🔍 핀치줌/더블탭 줌은 브라우저 기본 동작 그대로 사용
               />
             </div>
           ))}
@@ -93,11 +95,13 @@ export default function EpisodePage() {
 
 /**
  * 전체 화면 이미지 뷰어 컴포넌트
- * - 핀치줌: 모바일 브라우저 기본 확대/축소 사용 (우리가 막지 않음)
- * - 좌/우 스와이프: 터치 제스처로 컷 이동
- * - 상단 닫기/인덱스 표시
- * - 부드러운 전환 애니메이션 (globals.css의 viewerFadeSlideIn 사용)
- * - PC 방향 버튼 UI
+ * ✅ 이미지 클릭 → 전체 화면 뷰어
+ * ✅ 상단 닫기 + 인덱스 표시
+ * ✅ 좌/우 스와이프
+ * ✅ PC 방향키 / 버튼으로 이동
+ * ✅ 페이드 + 슬라이드 애니메이션 (globals.css 의 .viewer-image)
+ * ✅ 핀치줌 / 더블탭 줌: 브라우저 기본
+ * ✅ 배경 스크롤 락
  */
 function FullscreenViewer({ images, initialIndex, onClose, title }) {
   const [index, setIndex] = useState(initialIndex);
@@ -116,6 +120,30 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     );
   };
 
+  // 🔒 배경 스크롤 락 + 키보드(← → Esc) 처리
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowRight") {
+        goNext();
+      } else if (e.key === "ArrowLeft") {
+        goPrev();
+      } else if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
+  // 👆👈👉 터치 스와이프
   const handleTouchStart = (e) => {
     if (e.touches && e.touches.length === 1) {
       setTouchStartX(e.touches[0].clientX);
@@ -133,13 +161,12 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     if (touchStartX === null || touchEndX === null) return;
     const diff = touchStartX - touchEndX;
 
-    // 스와이프 감지 threshold (px)
     if (Math.abs(diff) > 50) {
       if (diff > 0) {
-        // 왼쪽으로 밀었음 → 다음 컷
+        // 왼쪽으로 스와이프 → 다음 컷
         goNext();
       } else {
-        // 오른쪽으로 밀었음 → 이전 컷
+        // 오른쪽으로 스와이프 → 이전 컷
         goPrev();
       }
     }
@@ -151,15 +178,16 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
   return (
     <div
       className="fixed inset-0 bg-black/95 flex items-center justify-center z-50"
-      onClick={onClose} // 바깥 영역 클릭 시 닫힘
+      onClick={onClose} // 배경 클릭 시 닫기
     >
-      {/* 안쪽 컨텐츠 클릭이 밖으로 전파되지 않도록 */}
+      {/* 안쪽 컨텐츠 클릭은 배경으로 전파 막기 */}
       <div
         className="relative w-full h-full flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 상단 바: 닫기 + 인덱스 표시 */}
+        {/* 상단 바: 닫기 버튼 + 제목/인덱스 */}
         <div className="flex items-center justify-between px-4 py-3 text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
+          {/* 닫기 버튼 (뉴모피즘 느낌은 .neo-button-light) */}
           <button
             onClick={onClose}
             className="neo-button-light text-xs font-semibold"
@@ -175,33 +203,37 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
           </div>
         </div>
 
-        {/* 가운데 영역: 이미지 뷰 */}
+        {/* 가운데 영역: 이미지 + 터치 스와이프 영역 */}
         <div
-          className="flex-1 flex items-center justify-center px-3 pb-6 relative"
+          className="flex-1 flex items-center justify-center px-3 pb-6"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
+          {/* 방향 버튼 UI (PC, 태블릿에서도 사용 가능) */}
+          <button
+            type="button"
+            onClick={goPrev}
+            className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2
+                       h-10 w-10 items-center justify-center rounded-full
+                       bg-white/15 hover:bg-white/25 text-white text-lg"
+          >
+            ‹
+          </button>
+
           <img
             key={currentSrc} // 인덱스 바뀔 때마다 애니메이션 다시 적용
             src={currentSrc}
             alt={`${title} 뷰어`}
             className="viewer-image max-w-full max-h-full object-contain"
-            draggable={false}
           />
 
-          {/* PC 방향 버튼 (중간 좌우) */}
-          <button
-            type="button"
-            onClick={goPrev}
-            className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 text-white text-3xl opacity-70 hover:opacity-100"
-          >
-            ‹
-          </button>
           <button
             type="button"
             onClick={goNext}
-            className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 text-white text-3xl opacity-70 hover:opacity-100"
+            className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2
+                       h-10 w-10 items-center justify-center rounded-full
+                       bg-white/15 hover:bg-white/25 text-white text-lg"
           >
             ›
           </button>
