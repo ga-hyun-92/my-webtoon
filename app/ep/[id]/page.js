@@ -65,10 +65,14 @@ export default function EpisodePage() {
             ← 목록
           </Link>
 
-          <h1 className="text-base font-bold text-slate-900">
+          <h1 className="text-base font-bold text-slate-900"
+          style={{  marginLeft: "10px", marginRight: "10px" }}
+          >
             {episode.title}
           </h1>
-          <p className="text-sm text-slate-600 mt-1">
+          <p className="text-sm text-slate-600 mt-1"
+               style={{  marginLeft: "10px", marginRight: "10px" }}
+          >
             {episode.description}
           </p>
         </header>
