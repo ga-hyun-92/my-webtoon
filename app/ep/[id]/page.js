@@ -1,7 +1,7 @@
 // app/ep/[id]/page.js
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -71,7 +71,7 @@ export default function EpisodePage() {
                 height={1350}
                 className="w-full h-auto rounded-xl cursor-pointer"
                 onClick={() => openViewer(idx)}
-                // 브라우저 기본 핀치줌 그대로 동작하도록 touch 설정은 건드리지 않음
+                // 핀치줌은 브라우저 기본 확대/축소를 그대로 사용
               />
             </div>
           ))}
@@ -97,14 +97,15 @@ export default function EpisodePage() {
  * - 좌/우 스와이프: 터치 제스처로 컷 이동
  * - 상단 닫기/인덱스 표시
  * - 부드러운 전환 애니메이션 (fade + 살짝 슬라이드)
+ * - 상하 스크롤 락 / 더블탭 줌 / PC 방향 버튼
  */
 function FullscreenViewer({ images, initialIndex, onClose, title }) {
   const [index, setIndex] = useState(initialIndex);
-  const [anim, setAnim] = useState("");
+  const [anim, setAnim] = useState("");        // slide-left / slide-right / fadeIn
   const [isZoomed, setIsZoomed] = useState(false);
   const touchStart = useRef(null);
 
-  // scroll lock (안전한 버전)
+  // 상하 스크롤 락 (document 안전하게 체크)
   useEffect(() => {
     if (typeof document !== "undefined") {
       const original = document.body.style.overflow;
@@ -119,49 +120,66 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
   const goPrev = () => {
     if (index === 0) return;
     setAnim("slide-right");
-    setIndex(index - 1);
+    setIndex((prev) => prev - 1);
   };
 
   const goNext = () => {
     if (index === images.length - 1) return;
     setAnim("slide-left");
-    setIndex(index + 1);
+    setIndex((prev) => prev + 1);
   };
 
-  const onTouchStart = (e) => {
+  // 터치 스와이프
+  const handleTouchStart = (e) => {
     const t = e.touches[0];
     touchStart.current = { x: t.clientX, y: t.clientY };
   };
 
-  const onTouchEnd = (e) => {
+  const handleTouchEnd = (e) => {
     if (!touchStart.current) return;
-    const t = e.changedTouches[0];
 
+    const t = e.changedTouches[0];
     const dx = t.clientX - touchStart.current.x;
     const dy = t.clientY - touchStart.current.y;
 
-    if (Math.abs(dy) > Math.abs(dx)) return;
-
-    if (dx > 60) goPrev();
-    if (dx < -60) goNext();
+    // 좌우 스와이프만 인식 (상하 스크롤은 무시)
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) goNext(); // 왼쪽으로 밀기 → 다음 컷
+      else goPrev();        // 오른쪽으로 밀기 → 이전 컷
+    }
 
     touchStart.current = null;
   };
 
-  const onDoubleTap = () => {
+  // 더블탭 줌
+  const handleDoubleClick = () => {
     setIsZoomed((prev) => !prev);
   };
 
+  // 애니메이션 상태 reset
   useEffect(() => {
     if (!anim) return;
-    const timer = setTimeout(() => setAnim(""), 300);
+    const timer = setTimeout(() => setAnim(""), 250);
     return () => clearTimeout(timer);
   }, [anim]);
 
+  const currentSrc = images[index];
+
   return (
-    <div className="fixed inset-0 bg-black/95 z-[9999] flex flex-col select-none touch-pan-y">
-      <div className="pt-safe flex justify-between items-center px-4 py-3 text-white text-sm bg-gradient-to-b from-black/70 to-transparent">
-        <button onClick={onClose} className="neo-button-light px-3 py-1">
+    <div
+      className="fixed inset-0 bg-black/95 z-[9999] flex flex-col select-none"
+      onClick={onClose} // 바깥 영역 클릭 시 닫기
+    >
+      {/* 상단 바: 닫기 + 인덱스 */}
+      <div
+        className="pt-safe flex items-center justify-between px-4 py-3
+                   text-white text-sm bg-gradient-to-b from-black/70 to-transparent"
+        onClick={(e) => e.stopPropagation()} // 상단 바 클릭은 닫기 막기
+      >
+        <button
+          onClick={onClose}
+          className="neo-button-light px-3 py-1 text-xs font-semibold"
+        >
           닫기 ✕
         </button>
 
@@ -173,15 +191,19 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
         </div>
       </div>
 
+      {/* 가운데 이미지 영역 */}
       <div
-        className="flex-1 flex items-center justify-center relative overflow-hidden"
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-        onDoubleClick={onDoubleTap}
+        className="flex-1 flex items-center justify-center relative overflow-hidden touch-pan-y"
+        onClick={(e) => e.stopPropagation()} // 이미지 영역 클릭은 닫기 막기
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onDoubleClick={handleDoubleClick}
       >
         <img
-          key={images[index]}  // 중요
-          src={images[index]}
+          key={currentSrc}
+          src={currentSrc}
+          alt={`${title} 뷰어`}
+          draggable={false}
           className={`
             max-h-[90vh] w-auto object-contain 
             transition-transform duration-200
@@ -194,23 +216,26 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
                 : "animate-fadeIn"
             }
           `}
-          draggable={false}
         />
-      </div>
 
-      {/* PC 화살표 */}
-      <button
-        onClick={goPrev}
-        className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 text-white text-4xl opacity-60 hover:opacity-100"
-      >
-        ‹
-      </button>
-      <button
-        onClick={goNext}
-        className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 text-white text-4xl opacity-60 hover:opacity-100"
-      >
-        ›
-      </button>
+        {/* PC 화살표 버튼 */}
+        <button
+          type="button"
+          onClick={goPrev}
+          className="hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 
+                     text-white text-4xl opacity-60 hover:opacity-100"
+        >
+          ‹
+        </button>
+        <button
+          type="button"
+          onClick={goNext}
+          className="hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 
+                     text-white text-4xl opacity-60 hover:opacity-100"
+        >
+          ›
+        </button>
+      </div>
     </div>
   );
 }
