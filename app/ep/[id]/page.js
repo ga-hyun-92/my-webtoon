@@ -71,7 +71,7 @@ export default function EpisodePage() {
             {episode.title}
           </h1>
           <p className="text-sm text-slate-600 mt-1"
-               style={{  marginLeft: "10px", marginRight: "10px" }}
+          style={{  marginLeft: "10px", marginRight: "10px" }}
           >
             {episode.description}
           </p>
@@ -84,7 +84,7 @@ export default function EpisodePage() {
       key={idx}
       className="w-full"
       style={{
-        marginBottom: idx === images.length - 1 ? 0 : "64px", // 64px = 4rem 정도
+        marginBottom: idx === images.length - 1 ? 0 : "120px", // 64px = 4rem 정도
       }}
     >
       <Image

@@ -12,7 +12,12 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-100">
       {/* 상단 헤더 - 좌우/위 여백 넉넉하게 */}
-      <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-8 md:pt-12 pb-10">
+      <div 
+        className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-8 md:pt-12 pb-10"
+          style={{
+                          paddingRight: "14px",
+  }}
+        >
         <header 
           className="mb-4 md:mb-6"
           style={{
@@ -30,9 +35,10 @@ export default function Home() {
         </header>
 
         {/* 👉 목록 그리드: 모바일 2열, PC 3열 */}
-        <ul className="episode-grid-layout">
+        <ul className="episode-grid-layout list-none">
+      
           {sortedEpisodes.map((ep) => (
-            <li key={ep.id}>
+            <li className="list-none" key={ep.id}>
               <Link href={`/ep/${ep.id}`} className="block">
                 <article className="episode-grid-card h-full">
                   {/* 4:3 썸네일 */}
