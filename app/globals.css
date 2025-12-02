@@ -226,3 +226,29 @@ p {
     font-size: 0.65rem;
   }
 }
+
+/* 에피소드 상세 이미지용 반응형 래퍼 */
+.episode-detail-item {
+  width: 100%;          /* 모바일: 가로 꽉 차게 */
+}
+
+/* PC(1024px 이상)에서는 가로폭을 33vw로 줄이고 가운데 정렬 */
+@media (min-width: 1024px) {
+  .episode-detail-item {
+    width: 60vw;        /* 화면 가로의 60% */
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* 모바일 기준 (기본 16px) */
+html {
+  font-size: 16px;
+}
+
+/* PC 이상일 때: 모바일보다 글씨 2배로! */
+@media (min-width: 1024px) {
+  html {
+    font-size: 32px;  /* ← 모바일의 딱 2배 */
+  }
+}

@@ -15,7 +15,8 @@ export default function Home() {
       <div 
         className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 pt-8 md:pt-12 pb-10"
           style={{
-                          paddingRight: "14px",
+                          paddingLeft: "0px", paddingRight: "14px" 
+                          
   }}
         >
         <header 

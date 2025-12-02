@@ -78,15 +78,34 @@ export default function EpisodePage() {
         </header>
 
         {/* 에피소드 이미지 리스트 */}
-        <section className="neo-card p-3">
+{/* 에피소드 이미지 리스트 */}
+<section className="neo-card p-3">
   {images.map((src, idx) => (
     <div
       key={idx}
-      className="w-full"
+      className="episode-detail-item"
       style={{
-        marginBottom: idx === images.length - 1 ? 0 : "120px", // 64px = 4rem 정도
+        position: "relative",
+        marginBottom: idx === images.length - 1 ? 0 : "64px",
       }}
     >
+      {/* ← 여기가 절 번호 표시 */}
+      <div
+        style={{
+          position: "absolute",
+          top: "8px",
+          right: "8px",
+          background: "rgba(0,0,0,0.6)",
+          color: "white",
+          padding: "4px 10px",
+          borderRadius: "8px",
+          fontSize: "0.8rem",
+          zIndex: 10,
+        }}
+      >
+        {idx + 1}절
+      </div>
+
       <Image
         src={src}
         alt={`${episode.title} 컷 ${idx + 1}`}
@@ -98,6 +117,7 @@ export default function EpisodePage() {
     </div>
   ))}
 </section>
+
 
       </div>
 
