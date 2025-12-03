@@ -50,31 +50,56 @@ export default function Home() {
                     />
                   </div>
 
-                  <div className="episode-grid-text mt-1.5">
-                    <h2 className="episode-grid-title text-slate-900">
-                      {ep.title}
-                    </h2>
+                  <div
+  className="episode-grid-text mt-1.5"
+  style={{
+    // 텍스트 영역을 세로 플렉스 박스로 만들기
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "3rem",
+  }}
+>
+  <h2 className="episode-grid-title text-slate-900">
+    {ep.title}
+  </h2>
 
-                    <p className="episode-grid-desc text-slate-600 line-clamp-2 mt-0.5">
-                      {ep.description}
-                    </p>
+  <p className="episode-grid-desc text-slate-600 line-clamp-2 mt-0.5">
+    {ep.description}
+  </p>
 
-                    <div className="flex items-center justify-between text-[0.65rem] text-slate-500"
-                             style={{
-                             marginTop: "auto",   // ⬅ 위 내용과 EP줄 사이 공간을 전부 먹고 아래로 밀어내기
-                              paddingTop: "6px",   // ⬅ 위 텍스트와 살짝 여백
-                               }}
-                       >
-                      <span className="inline-flex items-center gap-1">
-                      <span className="inline-block h-3 w-1 rounded-full bg-emerald-500" />
-                      <span className="uppercase tracking-wide">
-                        {ep.id.toUpperCase()}
-                      </span>
-                      </span>
-                    <span>1~{ep.imageCount}절</span>
-                    </div>
+  {/* ⬇⬇⬇ 남는 공간을 다 먹는 투명 스페이서 */}
+  <div style={{ flexGrow: 1 }} />
 
-                  </div>
+  {/* ⬇⬇⬇ EP / 절 정보 줄 – 항상 맨 아래 붙음 */}
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginTop: "6px",   // 위와 살짝 띄우기
+      paddingTop: "4px",  // 안쪽 여백
+      fontSize: "0.65rem",
+      color: "#6b7280",   // text-slate-500 비슷한 색
+    }}
+  >
+    <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
+      <span
+        style={{
+          display: "inline-block",
+          height: "12px",
+          width: "4px",
+          borderRadius: "999px",
+          backgroundColor: "#22c55e", // emerald-500
+        }}
+      />
+      <span style={{ textTransform: "uppercase", letterSpacing: "0.06em" }}>
+        {ep.id.toUpperCase()}
+      </span>
+    </span>
+    <span>1~{ep.imageCount}절</span>
+  </div>
+</div>
+
                 </article>
               </Link>
             </li>
