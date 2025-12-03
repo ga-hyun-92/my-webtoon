@@ -14,6 +14,12 @@ const suit = localFont({
 export const metadata = {
   title: "ANDREW 계시툰",
   description: "계시록 전장을 만화로 그려내는 계시툰",
+  openGraph: {
+    title: "ANDREW 계시툰",
+    description: "andrew 전용 계시록 웹툰 뷰어",
+    url: "https://my-webtoon.vercel.app/",
+    type: "website",
+  },
 };
 
 // ✅ Next 13+ 권장 방식: viewport 별도 export
