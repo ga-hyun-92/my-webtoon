@@ -68,7 +68,14 @@ export default function EpisodePage() {
           <h1 className="text-base font-bold text-slate-900"
           style={{  marginLeft: "10px", marginRight: "10px" }}
           >
-            {episode.title}
+            {episode.title
+              .split(",")
+              .map((part, idx, arr) => (
+              <span key={idx}>
+                 {part.trim()}
+                 {idx !== arr.length - 1 && <br />}
+              </span>
+              ))}
           </h1>
           <p className="text-sm text-slate-600 mt-1"
           style={{  marginLeft: "10px", marginRight: "10px" }}
