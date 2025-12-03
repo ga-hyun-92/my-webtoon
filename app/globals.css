@@ -259,7 +259,7 @@ html {
 /* PC 이상일 때: 모바일보다 글씨 2배로! */
 @media (min-width: 1024px) {
   html {
-    font-size: 28px;  /* ← 모바일의 딱 2배 */
+    font-size: 26px;  /* ← 모바일의 딱 2배 */
   }
 }
 
