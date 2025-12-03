@@ -189,7 +189,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
   // ✅ 여기서는 Tailwind 안 쓰고, 전부 인라인 스타일로 강제
   return (
     <div
-      onClick={onClose}
+      //onClick={onClose}
       style={{
         position: "fixed",
         inset: 0,
@@ -203,7 +203,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     >
       {/* 안쪽 클릭은 닫기 막기 */}
       <div
-        onClick={(e) => e.stopPropagation()}
+        //onClick={(e) => e.stopPropagation()}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -219,7 +219,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
             padding: "12px 16px",
             background:
               "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)",
-            fontSize: 13,
+            fontSize: "var(--viewer-base-size)",   // ⬅ 전체 기본 글씨
           }}
         >
           <button
@@ -230,15 +230,27 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
               border: "1px solid rgba(255,255,255,0.7)",
               background: "rgba(15,23,42,0.6)",
               color: "#f9fafb",
-              fontSize: 12,
+              fontSize: "var(--viewer-base-size)", // ⬅ 닫기 버튼 글씨
               cursor: "pointer",
             }}
           >
             닫기 ✕
           </button>
           <div style={{ textAlign: "right", lineHeight: 1.2 }}>
-            <div style={{ fontWeight: 600, fontSize: 14 }}>{title}</div>
-            <div style={{ fontSize: 11, opacity: 0.75 }}>
+            <div
+              style={{
+                fontWeight: 600,
+                fontSize: "var(--viewer-title-size)", // ⬅ 제목
+              }}
+            >
+              {title}
+            </div>
+            <div
+              style={{
+                fontSize: "var(--viewer-meta-size)", // ⬅ 1 / 24 카운트
+                opacity: 0.75,
+              }}
+            >
               {index + 1} / {total}
             </div>
           </div>
@@ -249,6 +261,12 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
+          onClick={(e) => {
+          // 🟢 배경(검정)만 눌렀을 때 닫기
+           if (e.target === e.currentTarget) {
+           onClose();
+            }
+            }}
           style={{
             flex: 1,
             display: "flex",
@@ -290,7 +308,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
               border: "1px solid rgba(255,255,255,0.7)",
               background: "rgba(15,23,42,0.6)",
               color: "#f9fafb",
-              fontSize: 12,
+              fontSize: "var(--viewer-base-size)", // ⬅ 이전/다음 버튼
               cursor: "pointer",
             }}
           >
@@ -306,7 +324,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
               border: "1px solid rgba(255,255,255,0.7)",
               background: "rgba(15,23,42,0.6)",
               color: "#f9fafb",
-              fontSize: 12,
+              fontSize: "var(--viewer-base-size)", // ⬅
               cursor: "pointer",
             }}
           >
