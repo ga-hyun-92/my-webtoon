@@ -147,7 +147,7 @@ a:hover {
   gap: 0.35rem;
   height: 100%;
    /* ⬇⬇⬇ 모바일 카드 높이 고정 */
-  min-height: 200px;
+  min-height: 220px;
   transition:
     transform 0.12s ease,
     box-shadow 0.12s ease,
