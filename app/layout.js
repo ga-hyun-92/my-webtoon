@@ -24,9 +24,10 @@ export const metadata = {
     siteName: "ANDREW 계시툰",
     type: "website",
     locale: "ko_KR",
-    images: [
+   images: [
       {
-        url: "/og.png",         // public/og.png 에 저장했다고 가정
+        // ✅ 절대 경로 + 새 파일명
+        url: "https://my-webtoon.vercel.app/og-v2.png",
         width: 1200,
         height: 630,
         alt: "ANDREW 계시툰 로고",
@@ -38,7 +39,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "ANDREW 계시툰 | 요한계시록 웹툰 뷰어",
     description: "웹툰으로 읽는 요한계시록 — 전장의 흐름을 한눈에",
-    images: ["/og-image.png"],
+    images: ["https://my-webtoon.vercel.app/og-v2.png"],
   },
 };
 
