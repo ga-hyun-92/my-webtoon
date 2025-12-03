@@ -147,7 +147,7 @@ a:hover {
   gap: 0.35rem;
   height: 100%;
    /* ⬇⬇⬇ 모바일 카드 높이 고정 */
-  min-height: 220px;
+  min-height: 230px;
   transition:
     transform 0.12s ease,
     box-shadow 0.12s ease,
@@ -158,7 +158,7 @@ a:hover {
 /* PC에서 카드 세로 높이 통일 */
 @media (min-width: 1024px) {
   .episode-grid-card {
-    min-height: 19rem;  /* 값은 보고 조절해도 됨 (18~20rem 정도) */
+    min-height: 20rem;  /* 값은 보고 조절해도 됨 (18~20rem 정도) */
   }
 }
 
