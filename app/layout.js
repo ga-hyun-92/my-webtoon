@@ -12,13 +12,30 @@ const suit = localFont({
 });
 
 export const metadata = {
-  title: "ANDREW 계시툰",
-  description: "계시록 전장을 만화로 그려내는 계시툰",
+  title: "ANDREW 계시툰 | 요한계시록 웹툰 뷰어",
+  description: "요한계시록 전장을 웹툰으로 쉽게 보는 온라인 뷰어",
+
   openGraph: {
-    title: "ANDREW 계시툰",
-    description: "andrew 전용 계시록 웹툰 뷰어",
-    url: "https://my-webtoon.vercel.app/",
+    title: "ANDREW 계시툰 – 계시록 전장 그림",
+    description: "전장의 흐름을 한눈에, 성경 계시록을 웹툰으로 쉽게 보는 온라인 뷰어",
+    url: "https://my-webtoon.vercel.app",
+    siteName: "ANDREW 계시툰",
     type: "website",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "ANDREW 계시툰 대표 이미지",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "ANDREW 계시툰 | 요한계시록 웹툰 뷰어",
+    description: "웹툰으로 읽는 요한계시록 — 전장의 흐름을 한눈에",
+    images: ["/og-image.png"],
   },
 };
 
