@@ -25,7 +25,7 @@ export default function Home() {
            marginLeft: "12px", marginTop: "18px"     // 헤더 위 여백
            }} >
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900">
-            ANDREW 계시툰
+            A-BIBLE 계시툰
           </h1>
           <p className="mt-1 md:mt-2 text-xs md:text-sm text-slate-600 flex items-center gap-1"
           >
