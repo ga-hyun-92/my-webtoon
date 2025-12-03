@@ -59,15 +59,21 @@ export default function Home() {
                       {ep.description}
                     </p>
 
-                    <div className="mt-1 flex items-center justify-between text-[0.65rem] text-slate-500">
+                    <div className="flex items-center justify-between text-[0.65rem] text-slate-500"
+                             style={{
+                             marginTop: "auto",   // ⬅ 위 내용과 EP줄 사이 공간을 전부 먹고 아래로 밀어내기
+                              paddingTop: "6px",   // ⬅ 위 텍스트와 살짝 여백
+                               }}
+                       >
                       <span className="inline-flex items-center gap-1">
-                        <span className="inline-block h-3 w-1 rounded-full bg-emerald-500" />
-                        <span className="uppercase tracking-wide">
-                          {ep.id.toUpperCase()}
-                        </span>
+                      <span className="inline-block h-3 w-1 rounded-full bg-emerald-500" />
+                      <span className="uppercase tracking-wide">
+                        {ep.id.toUpperCase()}
                       </span>
-                      <span>1~{ep.imageCount}절</span>
+                      </span>
+                    <span>1~{ep.imageCount}절</span>
                     </div>
+
                   </div>
                 </article>
               </Link>

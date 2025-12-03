@@ -201,6 +201,8 @@ a:hover {
   flex-direction: column;
   gap: 0.1rem;
   min-height: 3rem;
+   /* ⬇⬇⬇ 추가! 텍스트 영역이 남는 높이를 차지하게 */
+  flex: 1;
 }
 
 /* 제목/설명 margin 리셋 */
