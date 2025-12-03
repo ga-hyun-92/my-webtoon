@@ -21,7 +21,7 @@ export const metadata = {
     title: "A-BIBLE 계시툰 – 계시록 전장 그림",
     description: "전장의 흐름을 한눈에, 성경 계시록을 웹툰으로 쉽게 보는 온라인 뷰어",
     url: "https://my-webtoon.vercel.app",
-    siteName: "ANDREW 계시툰",
+    siteName: "A-BIBLE 계시툰",
     type: "website",
     locale: "ko_KR",
    images: [
