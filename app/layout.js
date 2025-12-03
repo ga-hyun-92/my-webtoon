@@ -12,6 +12,8 @@ const suit = localFont({
 });
 
 export const metadata = {
+    // ❗ 도메스 정보 (OG 절대경로 만들 때 사용)
+  metadataBase: new URL("https://my-webtoon.vercel.app"),
   title: "ANDREW 계시툰 | 요한계시록 웹툰 뷰어",
   description: "요한계시록 전장을 웹툰으로 쉽게 보는 온라인 뷰어",
 
@@ -21,12 +23,13 @@ export const metadata = {
     url: "https://my-webtoon.vercel.app",
     siteName: "ANDREW 계시툰",
     type: "website",
+    locale: "ko_KR",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og.png",         // public/og.png 에 저장했다고 가정
         width: 1200,
         height: 630,
-        alt: "ANDREW 계시툰 대표 이미지",
+        alt: "ANDREW 계시툰 로고",
       },
     ],
   },
