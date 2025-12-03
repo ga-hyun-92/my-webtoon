@@ -158,7 +158,7 @@ a:hover {
 /* PC에서 카드 세로 높이 통일 */
 @media (min-width: 1024px) {
   .episode-grid-card {
-    min-height: 20rem;  /* 값은 보고 조절해도 됨 (18~20rem 정도) */
+    min-height: 22rem;  /* 값은 보고 조절해도 됨 (18~20rem 정도) */
   }
 }
 
