@@ -5,16 +5,18 @@
 @tailwind utilities;
 
 /* ------------------------------
-   기본 전역 스타일
+   기본 전역 스타일 => SUIT로 변경 
 ------------------------------ */
 body {
   margin: 0;
   padding: 0;
   background: #f3f4f6;
   color: #111827;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont,
+  /* ✅ 전체 기본 폰트를 SUIT로 변경 */
+  font-family: var(--font-suit), system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", "Noto Sans KR", sans-serif;
 }
+
 
 /* 링크 기본 스타일 제거 */
 a {
@@ -249,6 +251,6 @@ html {
 /* PC 이상일 때: 모바일보다 글씨 2배로! */
 @media (min-width: 1024px) {
   html {
-    font-size: 32px;  /* ← 모바일의 딱 2배 */
+    font-size: 28px;  /* ← 모바일의 딱 2배 */
   }
 }

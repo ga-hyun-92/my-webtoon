@@ -1,5 +1,15 @@
 // app/layout.js
 import "./globals.css";
+import localFont from "next/font/local";
+
+// ✅ SUIT Variable 폰트 설정 (파일 1개만 사용)
+const suit = localFont({
+  src: "./fonts/SUIT-Variable.woff2", // ← 방금 넣은 폰트 경로
+  // 만약 ttf라면: "./fonts/SUIT-Variable.ttf"
+  variable: "--font-suit",            // CSS 변수 이름
+  weight: "100 900",                  // 이 가변폰트가 커버하는 굵기 범위
+  display: "swap",                    // 깜빡임 최소화
+});
 
 export const metadata = {
   title: "ANDREW 계시툰",

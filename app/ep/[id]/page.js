@@ -93,13 +93,13 @@ export default function EpisodePage() {
       <div
         style={{
           position: "absolute",
-          top: "8px",
-          right: "8px",
+          bottom: "8px",
+          left: "8px",
           background: "rgba(0,0,0,0.6)",
           color: "white",
           padding: "4px 10px",
           borderRadius: "8px",
-          fontSize: "0.8rem",
+          fontSize: "0.9rem",
           zIndex: 10,
         }}
       >
