@@ -14,6 +14,14 @@ export default function EpisodePage() {
 
   const episode = episodes.find((ep) => ep.id === id);
 
+  // ✅ 현재 회차 인덱스 + 이전/다음 회차 계산
+  const currentIndex = episodes.findIndex((ep) => ep.id === id);
+  const prevEpisode = currentIndex > 0 ? episodes[currentIndex - 1] : null;
+  const nextEpisode =
+    currentIndex < episodes.length - 1
+      ? episodes[currentIndex + 1]
+      : null;
+
   // 전체 화면 뷰어용 인덱스 (null이면 닫힌 상태)
   const [viewerIndex, setViewerIndex] = useState(null);
 
@@ -52,80 +60,129 @@ export default function EpisodePage() {
     <main className="neo-page min-h-screen py-6 px-4">
       <div className="max-w-2xl mx-auto">
         {/* 상단 헤더 */}
-        <header className="mb-4" style={{ marginBottom: "30px" }}   
-         // ← 여기!! 40px = 꽤 넉넉
-         >
-          {/* 🔹 a 안에 button 넣지 말고 Link 자체를 버튼처럼 사용 */}
+        <header
+          className="mb-4"
+          style={{ marginBottom: "30px" }}
+        >
+          {/* Link 자체를 버튼처럼 사용 */}
           <Link
             href="/"
             className="inline-flex mb-3 neo-button px-4 py-1 text-sm text-slate-700"
-            style={{  marginLeft: "10px", marginTop: "16px",  marginBottom: "20px"
-             }}
-           >
+            style={{
+              marginLeft: "10px",
+              marginTop: "16px",
+              marginBottom: "20px",
+            }}
+          >
             ← 목록
           </Link>
 
-          <h1 className="text-base font-bold text-slate-900"
-          style={{  marginLeft: "10px", marginRight: "10px" }}
+          <h1
+            className="text-base font-bold text-slate-900"
+            style={{ marginLeft: "10px", marginRight: "10px" }}
           >
-            {episode.title
-              .split(",")
-              .map((part, idx, arr) => (
+            {episode.title.split(",").map((part, idx, arr) => (
               <span key={idx}>
-                 {part.trim()}
-                 {idx !== arr.length - 1 && <br />}
+                {part.trim()}
+                {idx !== arr.length - 1 && <br />}
               </span>
-              ))}
+            ))}
           </h1>
-          <p className="text-sm text-slate-600 mt-1"
-          style={{  marginLeft: "10px", marginRight: "10px" }}
+          <p
+            className="text-sm text-slate-600 mt-1"
+            style={{ marginLeft: "10px", marginRight: "10px" }}
           >
             {episode.description}
           </p>
         </header>
 
         {/* 에피소드 이미지 리스트 */}
-{/* 에피소드 이미지 리스트 */}
-<section className="neo-card p-3">
-  {images.map((src, idx) => (
-    <div
-      key={idx}
-      className="episode-detail-item"
-      style={{
-        position: "relative",
-        marginBottom: idx === images.length - 1 ? 0 : "64px",
-      }}
-    >
-      {/* ← 여기가 절 번호 표시 */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "8px",
-          left: "8px",
-          background: "rgba(0,0,0,0.6)",
-          color: "white",
-          padding: "4px 10px",
-          borderRadius: "8px",
-          fontSize: "0.9rem",
-          zIndex: 10,
-        }}
-      >
-        {idx + 1}절
-      </div>
+        <section className="neo-card p-3">
+          {images.map((src, idx) => (
+            <div
+              key={idx}
+              className="episode-detail-item"
+              style={{
+                position: "relative",
+                marginBottom: idx === images.length - 1 ? 0 : "64px",
+              }}
+            >
+              {/* 절 번호 표시 (왼쪽 아래) */}
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "8px",
+                  left: "8px",
+                  background: "rgba(0,0,0,0.6)",
+                  color: "white",
+                  padding: "4px 10px",
+                  borderRadius: "8px",
+                  fontSize: "0.9rem",
+                  zIndex: 10,
+                }}
+              >
+                {idx + 1}절
+              </div>
 
-      <Image
-        src={src}
-        alt={`${episode.title} 컷 ${idx + 1}`}
-        width={1080}
-        height={1350}
-        className="w-full h-auto rounded-xl cursor-pointer"
-        onClick={() => openViewer(idx)}
-      />
-    </div>
-  ))}
-</section>
+              <Image
+                src={src}
+                alt={`${episode.title} 컷 ${idx + 1}`}
+                width={1080}
+                height={1350}
+                className="w-full h-auto rounded-xl cursor-pointer"
+                onClick={() => openViewer(idx)}
+              />
+            </div>
+          ))}
+        </section>
 
+        {/* ✅ 회차 이동 / 목록 버튼 */}
+        <div
+          style={{
+            marginTop: "24px",
+            marginBottom: "8px",
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "8px",
+          }}
+        >
+          {/* 이전 회차 */}
+          <div>
+            {prevEpisode && (
+              <Link
+                href={`/ep/${prevEpisode.id}`}
+                className="inline-flex"
+              >
+                <button className="neo-button text-sm">
+                  ← 이전 회차
+                </button>
+              </Link>
+            )}
+          </div>
 
+          {/* 목록으로 */}
+          <div>
+            <Link href="/" className="inline-flex">
+              <button className="neo-button text-sm">
+                🔝 목록으로
+              </button>
+            </Link>
+          </div>
+
+          {/* 다음 회차 */}
+          <div>
+            {nextEpisode && (
+              <Link
+                href={`/ep/${nextEpisode.id}`}
+                className="inline-flex"
+              >
+                <button className="neo-button text-sm">
+                  다음 회차 →
+                </button>
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* 전체 화면 뷰어 오버레이 */}
@@ -158,7 +215,9 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
   };
 
   const goNext = () => {
-    setIndex((prev) => (prev < total - 1 ? prev + 1 : prev));
+    setIndex((prev) =>
+      prev < total - 1 ? prev + 1 : prev
+    );
   };
 
   const currentSrc = images[index];
@@ -186,7 +245,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
 
     if (Math.abs(diff) > 50) {
       if (diff > 0) goNext(); // 왼쪽 스와이프 → 다음
-      else goPrev();          // 오른쪽 스와이프 → 이전
+      else goPrev(); // 오른쪽 스와이프 → 이전
     }
 
     setTouchStartX(null);
@@ -196,7 +255,6 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
   // ✅ 여기서는 Tailwind 안 쓰고, 전부 인라인 스타일로 강제
   return (
     <div
-      //onClick={onClose}
       style={{
         position: "fixed",
         inset: 0,
@@ -204,13 +262,12 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        zIndex: 999999,         // 진짜 맨 위로!
+        zIndex: 999999,
         color: "#fff",
       }}
     >
-      {/* 안쪽 클릭은 닫기 막기 */}
+      {/* 안쪽 컨텐츠 */}
       <div
-        //onClick={(e) => e.stopPropagation()}
         style={{
           display: "flex",
           flexDirection: "column",
@@ -226,7 +283,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
             padding: "12px 16px",
             background:
               "linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)",
-            fontSize: "var(--viewer-base-size)",   // ⬅ 전체 기본 글씨
+            fontSize: "var(--viewer-base-size)",
           }}
         >
           <button
@@ -237,7 +294,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
               border: "1px solid rgba(255,255,255,0.7)",
               background: "rgba(15,23,42,0.6)",
               color: "#f9fafb",
-              fontSize: "var(--viewer-base-size)", // ⬅ 닫기 버튼 글씨
+              fontSize: "var(--viewer-base-size)",
               cursor: "pointer",
             }}
           >
@@ -247,14 +304,14 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
             <div
               style={{
                 fontWeight: 600,
-                fontSize: "var(--viewer-title-size)", // ⬅ 제목
+                fontSize: "var(--viewer-title-size)",
               }}
             >
               {title}
             </div>
             <div
               style={{
-                fontSize: "var(--viewer-meta-size)", // ⬅ 1 / 24 카운트
+                fontSize: "var(--viewer-meta-size)",
                 opacity: 0.75,
               }}
             >
@@ -269,11 +326,11 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onClick={(e) => {
-          // 🟢 배경(검정)만 눌렀을 때 닫기
-           if (e.target === e.currentTarget) {
-           onClose();
+            // 배경(검정)만 눌렀을 때 닫기
+            if (e.target === e.currentTarget) {
+              onClose();
             }
-            }}
+          }}
           style={{
             flex: 1,
             display: "flex",
@@ -315,7 +372,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
               border: "1px solid rgba(255,255,255,0.7)",
               background: "rgba(15,23,42,0.6)",
               color: "#f9fafb",
-              fontSize: "var(--viewer-base-size)", // ⬅ 이전/다음 버튼
+              fontSize: "var(--viewer-base-size)",
               cursor: "pointer",
             }}
           >
@@ -331,7 +388,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
               border: "1px solid rgba(255,255,255,0.7)",
               background: "rgba(15,23,42,0.6)",
               color: "#f9fafb",
-              fontSize: "var(--viewer-base-size)", // ⬅
+              fontSize: "var(--viewer-base-size)",
               cursor: "pointer",
             }}
           >
