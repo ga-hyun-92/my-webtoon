@@ -1,7 +1,7 @@
 // app/ep/[id]/page.js
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";   // ⬅ useEffect 추가
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,12 +18,30 @@ export default function EpisodePage() {
   const currentIndex = episodes.findIndex((ep) => ep.id === id);
   const prevEpisode = currentIndex > 0 ? episodes[currentIndex - 1] : null;
   const nextEpisode =
-    currentIndex < episodes.length - 1
-      ? episodes[currentIndex + 1]
-      : null;
+    currentIndex < episodes.length - 1 ? episodes[currentIndex + 1] : null;
 
   // 전체 화면 뷰어용 인덱스 (null이면 닫힌 상태)
   const [viewerIndex, setViewerIndex] = useState(null);
+
+  // 🔹 이 회차에서 "마지막으로 본 절" (이어보기용)
+  const [savedIndex, setSavedIndex] = useState(null);
+
+  // 이 회차의 localStorage key
+  const storageKey = episode ? `last-${episode.id}-index` : null;
+
+  // 입장 시 localStorage에서 이 회차의 마지막 절 불러오기
+  useEffect(() => {
+    if (!episode) return;
+    if (typeof window === "undefined") return;
+
+    const raw = window.localStorage.getItem(`last-${episode.id}-index`);
+    if (raw !== null) {
+      const n = Number(raw);
+      if (!Number.isNaN(n)) {
+        setSavedIndex(n);
+      }
+    }
+  }, [episode]);
 
   if (!episode) {
     return (
@@ -94,6 +112,23 @@ export default function EpisodePage() {
           >
             {episode.description}
           </p>
+
+          {/* 🔥 이어보기 버튼 (이미 본 적이 있으면) */}
+          {typeof savedIndex === "number" && (
+            <button
+              onClick={() => openViewer(savedIndex)}
+              className="neo-button text-xs"
+              style={{
+                marginLeft: "10px",
+                marginTop: "12px",
+                paddingInline: "12px",
+                paddingBlock: "6px",
+                borderRadius: "999px",
+              }}
+            >
+              ⏱ 이어보기 {savedIndex + 1}절부터
+            </button>
+          )}
         </header>
 
         {/* 에피소드 이미지 리스트 */}
@@ -192,6 +227,7 @@ export default function EpisodePage() {
           initialIndex={viewerIndex}
           onClose={closeViewer}
           title={episode.title}
+          episodeId={episode.id}   // ⬅ 진행 저장 위해 전달
         />
       )}
     </main>
@@ -201,7 +237,7 @@ export default function EpisodePage() {
 /* -----------------------------
    전체 화면 이미지 뷰어 (최소 버전)
 ----------------------------- */
-function FullscreenViewer({ images, initialIndex, onClose, title }) {
+function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
   const total = Array.isArray(images) ? images.length : 0;
   const safeInitial = typeof initialIndex === "number" ? initialIndex : 0;
   const [index, setIndex] = useState(
@@ -210,14 +246,21 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
 
   if (!total) return null;
 
+  // 🔥 index·episodeId가 바뀔 때마다 localStorage에 저장
+  useEffect(() => {
+    if (!episodeId) return;
+    if (typeof window === "undefined") return;
+
+    window.localStorage.setItem(`last-${episodeId}-index`, String(index));
+    window.localStorage.setItem("lastEpisodeId", episodeId);
+  }, [index, episodeId]);
+
   const goPrev = () => {
     setIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
 
   const goNext = () => {
-    setIndex((prev) =>
-      prev < total - 1 ? prev + 1 : prev
-    );
+    setIndex((prev) => (prev < total - 1 ? prev + 1 : prev));
   };
 
   const currentSrc = images[index];
@@ -251,6 +294,27 @@ function FullscreenViewer({ images, initialIndex, onClose, title }) {
     setTouchStartX(null);
     setTouchEndX(null);
   };
+ 
+    // 🔥 키보드 단축키: ← 이전 / → 다음 / Esc 닫기
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        goPrev();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        goNext();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [goPrev, goNext, onClose]);
 
   // ✅ 여기서는 Tailwind 안 쓰고, 전부 인라인 스타일로 강제
   return (
