@@ -1,7 +1,7 @@
 // app/ep/[id]/page.js
 "use client";
 
-import { useState, useEffect } from "react";   // ⬅ useEffect 추가
+import { useState, useEffect, useRef } from "react";   // ⬅ useRef 추가
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,8 +26,8 @@ export default function EpisodePage() {
   // 🔹 이 회차에서 "마지막으로 본 절" (이어보기용)
   const [savedIndex, setSavedIndex] = useState(null);
 
-  // 이 회차의 localStorage key
-  const storageKey = episode ? `last-${episode.id}-index` : null;
+  // 각 이미지(절)의 DOM을 담아둘 ref 배열 (스크롤 복귀용)
+  const imageRefs = useRef([]);
 
   // 입장 시 localStorage에서 이 회차의 마지막 절 불러오기
   useEffect(() => {
@@ -69,9 +69,25 @@ export default function EpisodePage() {
     setViewerIndex(index);
   };
 
-  const closeViewer = () => {
-    console.log("closeViewer");
+  // ⬇⬇ 뷰어에서 닫힐 때 호출되는 함수 (어느 절에서 나왔는지 받음)
+  const handleViewerClose = (lastIndex) => {
     setViewerIndex(null);
+
+    // 이어보기 인덱스 상태도 바로 갱신
+    if (typeof lastIndex === "number") {
+      setSavedIndex(lastIndex);
+    }
+
+    // 상세페이지에서 해당 절 위치로 스크롤 복귀
+    if (
+      typeof lastIndex === "number" &&
+      imageRefs.current[lastIndex]
+    ) {
+      imageRefs.current[lastIndex].scrollIntoView({
+        behavior: "auto", // "smooth"로 바꾸면 부드럽게
+        block: "start",
+      });
+    }
   };
 
   return (
@@ -136,6 +152,9 @@ export default function EpisodePage() {
           {images.map((src, idx) => (
             <div
               key={idx}
+              ref={(el) => {
+                imageRefs.current[idx] = el;  // ⬅ 각 절 DOM 저장
+              }}
               className="episode-detail-item"
               style={{
                 position: "relative",
@@ -225,9 +244,9 @@ export default function EpisodePage() {
         <FullscreenViewer
           images={images}
           initialIndex={viewerIndex}
-          onClose={closeViewer}
+          onClose={handleViewerClose}   // ⬅ lastIndex 넘겨받는 핸들러
           title={episode.title}
-          episodeId={episode.id}   // ⬅ 진행 저장 위해 전달
+          episodeId={episode.id}        // ⬅ 진행 저장 위해 전달
         />
       )}
     </main>
@@ -235,7 +254,7 @@ export default function EpisodePage() {
 }
 
 /* -----------------------------
-   전체 화면 이미지 뷰어 (최소 버전)
+   전체 화면 이미지 뷰어
 ----------------------------- */
 function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
   const total = Array.isArray(images) ? images.length : 0;
@@ -246,21 +265,19 @@ function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
 
   if (!total) return null;
 
-  // 🔥 index·episodeId가 바뀔 때마다 localStorage에 저장
-  useEffect(() => {
-    if (!episodeId) return;
-    if (typeof window === "undefined") return;
-
-    window.localStorage.setItem(`last-${episodeId}-index`, String(index));
-    window.localStorage.setItem("lastEpisodeId", episodeId);
-  }, [index, episodeId]);
-
   const goPrev = () => {
     setIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
 
   const goNext = () => {
     setIndex((prev) => (prev < total - 1 ? prev + 1 : prev));
+  };
+
+  // ⬇ 닫을 때, 현재 index를 부모에게 넘겨주는 함수
+  const handleClose = () => {
+    if (typeof onClose === "function") {
+      onClose(index);
+    }
   };
 
   const currentSrc = images[index];
@@ -288,14 +305,23 @@ function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
 
     if (Math.abs(diff) > 50) {
       if (diff > 0) goNext(); // 왼쪽 스와이프 → 다음
-      else goPrev(); // 오른쪽 스와이프 → 이전
+      else goPrev();          // 오른쪽 스와이프 → 이전
     }
 
     setTouchStartX(null);
     setTouchEndX(null);
   };
- 
-    // 🔥 키보드 단축키: ← 이전 / → 다음 / Esc 닫기
+
+  // 🔥 index·episodeId가 바뀔 때마다 localStorage에 저장
+  useEffect(() => {
+    if (!episodeId) return;
+    if (typeof window === "undefined") return;
+
+    window.localStorage.setItem(`last-${episodeId}-index`, String(index));
+    window.localStorage.setItem("lastEpisodeId", episodeId);
+  }, [index, episodeId]);
+
+  // 🔥 키보드 단축키: ← 이전 / → 다음 / Esc 닫기
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "ArrowLeft") {
@@ -306,7 +332,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
         goNext();
       } else if (e.key === "Escape") {
         e.preventDefault();
-        onClose();
+        handleClose();
       }
     };
 
@@ -314,7 +340,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [goPrev, goNext, onClose]);
+  }, [index, total, onClose]); // index/total/onClose가 바뀔 때만 다시 바인딩
 
   // ✅ 여기서는 Tailwind 안 쓰고, 전부 인라인 스타일로 강제
   return (
@@ -351,7 +377,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
           }}
         >
           <button
-            onClick={onClose}
+            onClick={handleClose}
             style={{
               padding: "4px 10px",
               borderRadius: 999,
@@ -392,7 +418,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
           onClick={(e) => {
             // 배경(검정)만 눌렀을 때 닫기
             if (e.target === e.currentTarget) {
-              onClose();
+              handleClose();
             }
           }}
           style={{
