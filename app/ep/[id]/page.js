@@ -8,6 +8,12 @@ import Link from "next/link";
 import episodes from "../../../data/episodes.json";
 
 export default function EpisodePage() {
+
+    console.log(
+    "URL:", process.env.NEXT_PUBLIC_SUPABASE_URL,
+    "KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 8) + "..."
+  );
+  
   // ✅ URL에서 바로 id 가져오기: /ep/ep18 → { id: "ep18" }
   const params = useParams();
   const id = params?.id;
