@@ -1,19 +1,26 @@
 // app/ep/[id]/page.js
 "use client";
 
-import { useState, useEffect, useRef } from "react";   // ⬅ useRef 추가
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import episodes from "../../../data/episodes.json";
+import { supabase } from "../../../lib/supabaseClient";
+
+// 🔹 기기별 고유 ID 생성 (좋아요 중복 방지용)
+function getOrCreateDeviceId() {
+  if (typeof window === "undefined") return null;
+  const key = "abible-device-id";
+  let id = window.localStorage.getItem(key);
+  if (!id) {
+    id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now());
+    window.localStorage.setItem(key, id);
+  }
+  return id;
+}
 
 export default function EpisodePage() {
-
-    console.log(
-    "URL:", process.env.NEXT_PUBLIC_SUPABASE_URL,
-    "KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.slice(0, 8) + "..."
-  );
-  
   // ✅ URL에서 바로 id 가져오기: /ep/ep18 → { id: "ep18" }
   const params = useParams();
   const id = params?.id;
@@ -35,7 +42,14 @@ export default function EpisodePage() {
   // 각 이미지(절)의 DOM을 담아둘 ref 배열 (스크롤 복귀용)
   const imageRefs = useRef([]);
 
-  // 입장 시 localStorage에서 이 회차의 마지막 절 불러오기
+  // 🔹 조회수/좋아요 상태
+  const [stats, setStats] = useState({
+    views: 0,
+    likes: 0,
+    likedByMe: false,
+  });
+
+  // 👉 입장 시 localStorage에서 이 회차의 마지막 절 불러오기
   useEffect(() => {
     if (!episode) return;
     if (typeof window === "undefined") return;
@@ -48,6 +62,98 @@ export default function EpisodePage() {
       }
     }
   }, [episode]);
+
+  // 👉 입장 시 Supabase에서 조회수/좋아요 로드 + 조회수 +1
+  useEffect(() => {
+    if (!episode) return;
+    if (typeof window === "undefined") return;
+
+    const deviceId = getOrCreateDeviceId();
+    if (!deviceId) return;
+
+    const load = async () => {
+      // 1) 현재 조회수 가져오기
+      const { data: viewRow, error: viewErr } = await supabase
+        .from("episode_views")
+        .select("views")
+        .eq("episode_id", episode.id)
+        .maybeSingle();
+
+      let currentViews = viewRow?.views ?? 0;
+
+      // 2) 조회수 +1 (upsert)
+      const { data: updatedView, error: upErr } = await supabase
+        .from("episode_views")
+        .upsert(
+          { episode_id: episode.id, views: currentViews + 1 },
+          { onConflict: "episode_id" }
+        )
+        .select("views")
+        .single();
+
+      const finalViews = updatedView?.views ?? currentViews + 1;
+
+      // 3) 좋아요 수
+      const { count: likeCount } = await supabase
+        .from("episode_likes")
+        .select("*", { count: "exact", head: true })
+        .eq("episode_id", episode.id);
+
+      // 4) 내가 좋아요 눌렀는지
+      let likedByMe = false;
+      const { data: myLikeRows } = await supabase
+        .from("episode_likes")
+        .select("episode_id")
+        .eq("episode_id", episode.id)
+        .eq("device_id", deviceId);
+
+      likedByMe = !!(myLikeRows && myLikeRows.length > 0);
+
+      setStats({
+        views: finalViews,
+        likes: likeCount ?? 0,
+        likedByMe,
+      });
+    };
+
+    load();
+  }, [episode?.id]);
+
+  // 👉 좋아요 토글
+  const toggleLike = async () => {
+    if (!episode) return;
+    const deviceId = getOrCreateDeviceId();
+    if (!deviceId) return;
+
+    if (stats.likedByMe) {
+      // 이미 좋아요 → 취소
+      await supabase
+        .from("episode_likes")
+        .delete()
+        .eq("episode_id", episode.id)
+        .eq("device_id", deviceId);
+
+      setStats((prev) => ({
+        ...prev,
+        likedByMe: false,
+        likes: Math.max(0, prev.likes - 1),
+      }));
+    } else {
+      // 좋아요 추가
+      await supabase
+        .from("episode_likes")
+        .insert({
+          episode_id: episode.id,
+          device_id: deviceId,
+        });
+
+      setStats((prev) => ({
+        ...prev,
+        likedByMe: true,
+        likes: prev.likes + 1,
+      }));
+    }
+  };
 
   if (!episode) {
     return (
@@ -79,18 +185,16 @@ export default function EpisodePage() {
   const handleViewerClose = (lastIndex) => {
     setViewerIndex(null);
 
-    // 이어보기 인덱스 상태도 바로 갱신
     if (typeof lastIndex === "number") {
       setSavedIndex(lastIndex);
     }
 
-    // 상세페이지에서 해당 절 위치로 스크롤 복귀
     if (
       typeof lastIndex === "number" &&
       imageRefs.current[lastIndex]
     ) {
       imageRefs.current[lastIndex].scrollIntoView({
-        behavior: "auto", // "smooth"로 바꾸면 부드럽게
+        behavior: "auto", // "smooth" 해도 됨
         block: "start",
       });
     }
@@ -128,6 +232,7 @@ export default function EpisodePage() {
               </span>
             ))}
           </h1>
+
           <p
             className="text-sm text-slate-600 mt-1"
             style={{ marginLeft: "10px", marginRight: "10px" }}
@@ -135,7 +240,42 @@ export default function EpisodePage() {
             {episode.description}
           </p>
 
-          {/* 🔥 이어보기 버튼 (이미 본 적이 있으면) */}
+          {/* 👁 조회수 + ❤️ 좋아요 */}
+          <div
+            style={{
+              marginLeft: "10px",
+              marginRight: "10px",
+              marginTop: "8px",
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              fontSize: "0.8rem",
+              color: "#6b7280",
+            }}
+          >
+            <span>👁 {stats.views}회</span>
+
+            <button
+              type="button"
+              onClick={toggleLike}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "4px",
+                border: "none",
+                background: "transparent",
+                cursor: "pointer",
+                padding: 0,
+                color: stats.likedByMe ? "#f97316" : "#6b7280",
+                fontSize: "0.8rem",
+              }}
+            >
+              <span>{stats.likedByMe ? "❤️" : "🤍"}</span>
+              <span>{stats.likes}</span>
+            </button>
+          </div>
+
+          {/* ⏱ 이어보기 버튼 (이미 본 적이 있으면) */}
           {typeof savedIndex === "number" && (
             <button
               onClick={() => openViewer(savedIndex)}
@@ -159,7 +299,7 @@ export default function EpisodePage() {
             <div
               key={idx}
               ref={(el) => {
-                imageRefs.current[idx] = el;  // ⬅ 각 절 DOM 저장
+                imageRefs.current[idx] = el; // ⬅ 각 절 DOM 저장
               }}
               className="episode-detail-item"
               style={{
@@ -318,7 +458,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
     setTouchEndX(null);
   };
 
-  // 🔥 index·episodeId가 바뀔 때마다 localStorage에 저장
+  // 🔥 진행 상황 localStorage에 저장 (이어보기용)
   useEffect(() => {
     if (!episodeId) return;
     if (typeof window === "undefined") return;
@@ -346,7 +486,7 @@ function FullscreenViewer({ images, initialIndex, onClose, title, episodeId }) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [index, total, onClose]); // index/total/onClose가 바뀔 때만 다시 바인딩
+  }, [index, total, onClose]);
 
   // ✅ 여기서는 Tailwind 안 쓰고, 전부 인라인 스타일로 강제
   return (
